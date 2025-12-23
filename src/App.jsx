@@ -6,6 +6,7 @@ import OrderingScreen from './components/OrderingScreen';
 import ShopView from './components/ShopView';
 import ResultsScreen from './components/ResultsScreen';
 import StartScreen from './components/StartScreen';
+import TutorialScreen from './components/TutorialScreen';
 
 // Load Traces
 import traceSimple from './assets/trace_simple.json';
@@ -55,10 +56,28 @@ function App() {
   const [userHistory, setUserHistory] = useState([]);
   const [lastTurnResult, setLastTurnResult] = useState(null);
 
-  // Select Scenario
+  // Select Scenario - now goes to tutorial first
   const handleSelectScenario = (selectedId) => {
     setScenario(selectedId);
     setActiveTrace(TRACES[selectedId]);
+    // Check if user has seen tutorial before (localStorage)
+    const hasSeenTutorial = localStorage.getItem('stockout_tutorial_seen');
+    if (hasSeenTutorial) {
+      setGameState('START');
+    } else {
+      setGameState('TUTORIAL');
+    }
+  };
+
+  // Handle tutorial completion
+  const handleTutorialComplete = () => {
+    localStorage.setItem('stockout_tutorial_seen', 'true');
+    setGameState('START');
+  };
+
+  // Handle tutorial skip
+  const handleTutorialSkip = () => {
+    localStorage.setItem('stockout_tutorial_seen', 'true');
     setGameState('START');
   };
 
@@ -122,6 +141,15 @@ function App() {
 
   if (gameState === 'SCENARIO_SELECT') {
     return <StartScreen onSelectScenario={handleSelectScenario} />;
+  }
+
+  if (gameState === 'TUTORIAL') {
+    return (
+      <TutorialScreen
+        onComplete={handleTutorialComplete}
+        onSkip={handleTutorialSkip}
+      />
+    );
   }
 
   if (gameState === 'ORDERING' && inventoryState) {
