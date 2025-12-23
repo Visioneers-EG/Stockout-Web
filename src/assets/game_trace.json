@@ -1,0 +1,326 @@
+{
+  "turns": [
+    {
+      "step": 0,
+      "demand": 12.0,
+      "rl_action": {
+        "0": 2.0,
+        "1": 4.0
+      },
+      "environment_outcome": {
+        "cost": 180.0,
+        "sales": 0.0,
+        "spoilage": 0.0,
+        "inventory": 0.0,
+        "demand": 12.0
+      }
+    },
+    {
+      "step": 1,
+      "demand": 6.0,
+      "rl_action": {
+        "0": 2.0,
+        "1": 4.0
+      },
+      "environment_outcome": {
+        "cost": 61.0,
+        "sales": 18.0,
+        "spoilage": 0.0,
+        "inventory": 2.0,
+        "demand": 6.0
+      }
+    },
+    {
+      "step": 2,
+      "demand": 11.0,
+      "rl_action": {
+        "0": 0.0,
+        "1": 0.0
+      },
+      "environment_outcome": {
+        "cost": 5.5,
+        "sales": 11.0,
+        "spoilage": 0.0,
+        "inventory": 11.0,
+        "demand": 11.0
+      }
+    },
+    {
+      "step": 3,
+      "demand": 14.0,
+      "rl_action": {
+        "0": 1.0,
+        "1": 0.0
+      },
+      "environment_outcome": {
+        "cost": 18.5,
+        "sales": 14.0,
+        "spoilage": 0.0,
+        "inventory": 17.0,
+        "demand": 14.0
+      }
+    },
+    {
+      "step": 4,
+      "demand": 7.0,
+      "rl_action": {
+        "0": 1.0,
+        "1": 0.0
+      },
+      "environment_outcome": {
+        "cost": 26.0,
+        "sales": 7.0,
+        "spoilage": 0.0,
+        "inventory": 30.0,
+        "demand": 7.0
+      }
+    },
+    {
+      "step": 5,
+      "demand": 8.0,
+      "rl_action": {
+        "0": 1.0,
+        "1": 0.0
+      },
+      "environment_outcome": {
+        "cost": 23.4,
+        "sales": 8.0,
+        "spoilage": 0.0,
+        "inventory": 22.0,
+        "demand": 8.0
+      }
+    },
+    {
+      "step": 6,
+      "demand": 9.0,
+      "rl_action": {
+        "0": 0.0,
+        "1": 0.0
+      },
+      "environment_outcome": {
+        "cost": 14.1,
+        "sales": 9.0,
+        "spoilage": 0.0,
+        "inventory": 23.0,
+        "demand": 9.0
+      }
+    },
+    {
+      "step": 7,
+      "demand": 11.0,
+      "rl_action": {
+        "0": 1.0,
+        "1": 0.0
+      },
+      "environment_outcome": {
+        "cost": 22.6,
+        "sales": 11.0,
+        "spoilage": 0.0,
+        "inventory": 22.0,
+        "demand": 11.0
+      }
+    },
+    {
+      "step": 8,
+      "demand": 8.0,
+      "rl_action": {
+        "0": 1.0,
+        "1": 0.0
+      },
+      "environment_outcome": {
+        "cost": 23.8,
+        "sales": 8.0,
+        "spoilage": 0.0,
+        "inventory": 24.0,
+        "demand": 8.0
+      }
+    },
+    {
+      "step": 9,
+      "demand": 10.0,
+      "rl_action": {
+        "0": 1.0,
+        "1": 0.0
+      },
+      "environment_outcome": {
+        "cost": 18.8,
+        "sales": 10.0,
+        "spoilage": 0.0,
+        "inventory": 14.0,
+        "demand": 10.0
+      }
+    },
+    {
+      "step": 10,
+      "demand": 7.0,
+      "rl_action": {
+        "0": 1.0,
+        "1": 0.0
+      },
+      "environment_outcome": {
+        "cost": 19.9,
+        "sales": 7.0,
+        "spoilage": 0.0,
+        "inventory": 17.0,
+        "demand": 7.0
+      }
+    },
+    {
+      "step": 11,
+      "demand": 11.0,
+      "rl_action": {
+        "0": 1.0,
+        "1": 0.0
+      },
+      "environment_outcome": {
+        "cost": 18.6,
+        "sales": 11.0,
+        "spoilage": 0.0,
+        "inventory": 16.0,
+        "demand": 11.0
+      }
+    },
+    {
+      "step": 12,
+      "demand": 11.0,
+      "rl_action": {
+        "0": 1.0,
+        "1": 0.0
+      },
+      "environment_outcome": {
+        "cost": 18.0,
+        "sales": 11.0,
+        "spoilage": 0.0,
+        "inventory": 15.0,
+        "demand": 11.0
+      }
+    },
+    {
+      "step": 13,
+      "demand": 8.0,
+      "rl_action": {
+        "0": 1.0,
+        "1": 0.0
+      },
+      "environment_outcome": {
+        "cost": 19.2,
+        "sales": 8.0,
+        "spoilage": 0.0,
+        "inventory": 17.0,
+        "demand": 8.0
+      }
+    },
+    {
+      "step": 14,
+      "demand": 12.0,
+      "rl_action": {
+        "0": 1.0,
+        "1": 0.0
+      },
+      "environment_outcome": {
+        "cost": 18.0,
+        "sales": 12.0,
+        "spoilage": 0.0,
+        "inventory": 15.0,
+        "demand": 12.0
+      }
+    },
+    {
+      "step": 15,
+      "demand": 6.0,
+      "rl_action": {
+        "0": 1.0,
+        "1": 0.0
+      },
+      "environment_outcome": {
+        "cost": 20.4,
+        "sales": 6.0,
+        "spoilage": 0.0,
+        "inventory": 19.0,
+        "demand": 6.0
+      }
+    },
+    {
+      "step": 16,
+      "demand": 7.0,
+      "rl_action": {
+        "0": 0.0,
+        "1": 0.0
+      },
+      "environment_outcome": {
+        "cost": 12.4,
+        "sales": 7.0,
+        "spoilage": 0.0,
+        "inventory": 22.0,
+        "demand": 7.0
+      }
+    },
+    {
+      "step": 17,
+      "demand": 8.0,
+      "rl_action": {
+        "0": 1.0,
+        "1": 0.0
+      },
+      "environment_outcome": {
+        "cost": 23.8,
+        "sales": 8.0,
+        "spoilage": 0.0,
+        "inventory": 24.0,
+        "demand": 8.0
+      }
+    },
+    {
+      "step": 18,
+      "demand": 10.0,
+      "rl_action": {
+        "0": 1.0,
+        "1": 0.0
+      },
+      "environment_outcome": {
+        "cost": 23.8,
+        "sales": 10.0,
+        "spoilage": 0.0,
+        "inventory": 24.0,
+        "demand": 10.0
+      }
+    },
+    {
+      "step": 19,
+      "demand": 5.0,
+      "rl_action": {
+        "0": 1.0,
+        "1": 0.0
+      },
+      "environment_outcome": {
+        "cost": 22.3,
+        "sales": 5.0,
+        "spoilage": 0.0,
+        "inventory": 19.0,
+        "demand": 5.0
+      }
+    }
+  ],
+  "metadata": {
+    "shelf_life": 5,
+    "suppliers": [
+      {
+        "id": 0,
+        "lead_time": 1,
+        "unit_cost": 2.0,
+        "capacity": 100,
+        "moq": 1
+      },
+      {
+        "id": 1,
+        "lead_time": 3,
+        "unit_cost": 1.0,
+        "capacity": 100,
+        "moq": 1
+      }
+    ],
+    "demand_mean": 10.0,
+    "episode_length": 20,
+    "seed": 42
+  }
+}

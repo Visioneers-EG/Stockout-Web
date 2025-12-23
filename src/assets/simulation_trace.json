@@ -1,0 +1,1012 @@
+{
+  "metadata": {
+    "shelf_life": 5,
+    "episode_length": 30,
+    "suppliers": [
+      {
+        "id": 0,
+        "name": "Fast Supplier",
+        "lead_time": 1,
+        "cost": 2.0
+      },
+      {
+        "id": 1,
+        "name": "Slow Supplier",
+        "lead_time": 3,
+        "cost": 1.0
+      }
+    ]
+  },
+  "turns": [
+    {
+      "turn_index": 0,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 20,
+          "0": 20
+        }
+      },
+      "environment_outcome": {
+        "demand": 11.0,
+        "sales": 0.0,
+        "spoilage": 0.0,
+        "cost": 0.26
+      }
+    },
+    {
+      "turn_index": 1,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          20.0
+        ],
+        "1": [
+          0.0,
+          0.0,
+          20.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 20,
+          "0": 20
+        }
+      },
+      "environment_outcome": {
+        "demand": 12.0,
+        "sales": 20.0,
+        "spoilage": 0.0,
+        "cost": 0.17
+      }
+    },
+    {
+      "turn_index": 2,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          20.0
+        ],
+        "1": [
+          0.0,
+          20.0,
+          20.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 9.0,
+        "sales": 12.0,
+        "spoilage": 0.0,
+        "cost": 0.025
+      }
+    },
+    {
+      "turn_index": 3,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        0.0,
+        8.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          20.0,
+          20.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 11.0,
+        "sales": 11.0,
+        "spoilage": 0.0,
+        "cost": 0.032249999999999994
+      }
+    },
+    {
+      "turn_index": 4,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        0.0,
+        17.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          20.0,
+          10.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 0,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 10.0,
+        "sales": 10.0,
+        "spoilage": 0.0,
+        "cost": 0.0163
+      }
+    },
+    {
+      "turn_index": 5,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        7.0,
+        20.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          10.0,
+          10.0,
+          0.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 9.0,
+        "sales": 9.0,
+        "spoilage": 0.0,
+        "cost": 0.04419999999999999
+      }
+    },
+    {
+      "turn_index": 6,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        18.0,
+        10.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          10.0,
+          0.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 13.0,
+        "sales": 13.0,
+        "spoilage": 0.0,
+        "cost": 0.040249999999999994
+      }
+    },
+    {
+      "turn_index": 7,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        5.0,
+        10.0,
+        10.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          0.0,
+          10.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 4.0,
+        "sales": 4.0,
+        "spoilage": 0.0,
+        "cost": 0.0437
+      }
+    },
+    {
+      "turn_index": 8,
+      "season_factor": 1.0,
+      "inventory": [
+        1.0,
+        10.0,
+        10.0,
+        0.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          10.0,
+          10.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 0,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 7.0,
+        "sales": 7.0,
+        "spoilage": 0.0,
+        "cost": 0.019299999999999998
+      }
+    },
+    {
+      "turn_index": 9,
+      "season_factor": 1.0,
+      "inventory": [
+        4.0,
+        10.0,
+        0.0,
+        10.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          10.0,
+          10.0,
+          0.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 12.0,
+        "sales": 12.0,
+        "spoilage": 0.0,
+        "cost": 0.037899999999999996
+      }
+    },
+    {
+      "turn_index": 10,
+      "season_factor": 1.0,
+      "inventory": [
+        2.0,
+        0.0,
+        10.0,
+        10.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          10.0,
+          0.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 4.0,
+        "sales": 4.0,
+        "spoilage": 0.0,
+        "cost": 0.0479
+      }
+    },
+    {
+      "turn_index": 11,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        8.0,
+        10.0,
+        10.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          0.0,
+          10.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 8.0,
+        "sales": 8.0,
+        "spoilage": 0.0,
+        "cost": 0.0405
+      }
+    },
+    {
+      "turn_index": 12,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        10.0,
+        10.0,
+        0.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          10.0,
+          10.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 0,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 10.0,
+        "sales": 10.0,
+        "spoilage": 0.0,
+        "cost": 0.012999999999999998
+      }
+    },
+    {
+      "turn_index": 13,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        10.0,
+        0.0,
+        10.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          10.0,
+          10.0,
+          0.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 10.0,
+        "sales": 10.0,
+        "spoilage": 0.0,
+        "cost": 0.036500000000000005
+      }
+    },
+    {
+      "turn_index": 14,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        10.0,
+        10.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          10.0,
+          0.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 18.0,
+        "sales": 18.0,
+        "spoilage": 0.0,
+        "cost": 0.0253
+      }
+    },
+    {
+      "turn_index": 15,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        2.0,
+        10.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          0.0,
+          10.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 5
+        }
+      },
+      "environment_outcome": {
+        "demand": 15.0,
+        "sales": 12.0,
+        "spoilage": 0.0,
+        "cost": 0.08
+      }
+    },
+    {
+      "turn_index": 16,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          5.0
+        ],
+        "1": [
+          10.0,
+          10.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 20,
+          "0": 5
+        }
+      },
+      "environment_outcome": {
+        "demand": 16.0,
+        "sales": 15.0,
+        "spoilage": 0.0,
+        "cost": 0.115
+      }
+    },
+    {
+      "turn_index": 17,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          5.0
+        ],
+        "1": [
+          10.0,
+          10.0,
+          20.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 11.0,
+        "sales": 15.0,
+        "spoilage": 0.0,
+        "cost": 0.0175
+      }
+    },
+    {
+      "turn_index": 18,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          10.0,
+          20.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 8.0,
+        "sales": 8.0,
+        "spoilage": 0.0,
+        "cost": 0.0225
+      }
+    },
+    {
+      "turn_index": 19,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        0.0,
+        2.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          20.0,
+          10.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 6.0,
+        "sales": 6.0,
+        "spoilage": 0.0,
+        "cost": 0.034
+      }
+    },
+    {
+      "turn_index": 20,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        0.0,
+        16.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          10.0,
+          10.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 11.0,
+        "sales": 11.0,
+        "spoilage": 0.0,
+        "cost": 0.0315
+      }
+    },
+    {
+      "turn_index": 21,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        5.0,
+        10.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          10.0,
+          10.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 5.0,
+        "sales": 5.0,
+        "spoilage": 0.0,
+        "cost": 0.03900000000000001
+      }
+    },
+    {
+      "turn_index": 22,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        10.0,
+        10.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          10.0,
+          10.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 0,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 10.0,
+        "sales": 10.0,
+        "spoilage": 0.0,
+        "cost": 0.0115
+      }
+    },
+    {
+      "turn_index": 23,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        10.0,
+        10.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          10.0,
+          10.0,
+          0.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 4.0,
+        "sales": 4.0,
+        "spoilage": 0.0,
+        "cost": 0.045799999999999993
+      }
+    },
+    {
+      "turn_index": 24,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        6.0,
+        10.0,
+        10.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          10.0,
+          0.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 12.0,
+        "sales": 12.0,
+        "spoilage": 0.0,
+        "cost": 0.0397
+      }
+    },
+    {
+      "turn_index": 25,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        4.0,
+        10.0,
+        10.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          0.0,
+          10.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 15.0,
+        "sales": 15.0,
+        "spoilage": 0.0,
+        "cost": 0.0256
+      }
+    },
+    {
+      "turn_index": 26,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        9.0,
+        0.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          10.0,
+          10.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 14.0,
+        "sales": 14.0,
+        "spoilage": 0.0,
+        "cost": 0.02175
+      }
+    },
+    {
+      "turn_index": 27,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        0.0,
+        5.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          10.0,
+          10.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 20,
+          "0": 5
+        }
+      },
+      "environment_outcome": {
+        "demand": 10.0,
+        "sales": 10.0,
+        "spoilage": 0.0,
+        "cost": 0.07375
+      }
+    },
+    {
+      "turn_index": 28,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        0.0,
+        5.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          5.0
+        ],
+        "1": [
+          10.0,
+          10.0,
+          20.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 15.0,
+        "sales": 15.0,
+        "spoilage": 0.0,
+        "cost": 0.02125
+      }
+    },
+    {
+      "turn_index": 29,
+      "season_factor": 1.0,
+      "inventory": [
+        0.0,
+        0.0,
+        0.0,
+        5.0,
+        0.0
+      ],
+      "pipeline": {
+        "0": [
+          0.0
+        ],
+        "1": [
+          10.0,
+          20.0,
+          10.0
+        ]
+      },
+      "rl_decision": {
+        "orders": {
+          "1": 10,
+          "0": 0
+        }
+      },
+      "environment_outcome": {
+        "demand": 7.0,
+        "sales": 7.0,
+        "spoilage": 0.0,
+        "cost": 0.0275
+      }
+    }
+  ]
+}
