@@ -68,14 +68,10 @@ const OrderingScreen = ({ state, suppliers, onOrder, turnIndex, seasonInfo, last
     // Helper for Pipeline Road
     const renderPipeline = () => {
         return (
-            <div className="h-40 md:h-32 bg-slate-800 border-t-8 border-slate-900 relative flex items-center w-full shrink-0">
+            <div className="h-44 md:h-44 bg-slate-800 border-t-8 border-slate-900 relative flex items-center w-full shrink-0">
                 {/* Road Surface */}
                 <div className="absolute inset-0 bg-slate-800"></div>
                 <div className="absolute top-1/2 left-0 w-full h-0 border-t-4 border-dashed border-slate-600"></div>
-
-                <div className="z-10 absolute left-4 bg-slate-900/80 p-2 rounded text-xs text-slate-400 font-mono hidden md:block">
-                    IN TRANSIT &gt;&gt;&gt;
-                </div>
 
                 {/* Truck Container */}
                 <div className="flex-1 flex flex-row-reverse items-center justify-start gap-8 md:gap-12 px-4 md:px-12 overflow-x-auto h-full w-full pb-6 pt-8">
@@ -109,8 +105,8 @@ const OrderingScreen = ({ state, suppliers, onOrder, turnIndex, seasonInfo, last
                         return allTrucks.map((truck, i) => (
                             <div key={i} className="relative group shrink-0 transform transition-all hover:scale-110 cursor-pointer min-w-[80px]">
                                 {/* Days Label - Positioned higher to avoid cutoff */}
-                                <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-bold text-slate-400 whitespace-nowrap bg-slate-900 px-2 py-0.5 rounded-full border border-slate-700 z-20">
-                                    {truck.daysOut === 1 ? 'Arrives Tom.' : `${truck.daysOut} Days`}
+                                <div className="absolute -top-7 left-1/2 -translate-x-1/2 text-[10px] md:text-xs font-bold text-slate-300 whitespace-nowrap bg-slate-800 px-2 py-1 rounded border border-slate-600 z-20 shadow-lg">
+                                    {truck.daysOut === 1 ? 'Tomorrow' : `In ${truck.daysOut} Days`}
                                 </div>
 
                                 {/* Truck Icon */}
@@ -125,10 +121,6 @@ const OrderingScreen = ({ state, suppliers, onOrder, turnIndex, seasonInfo, last
                         ));
                     })()}
                 </div>
-
-                <div className="z-10 absolute right-4 bg-green-900/80 px-3 py-1 rounded text-xs text-green-400 font-bold border border-green-700/50 hidden md:block">
-                    WAREHOUSE
-                </div>
             </div>
         );
     };
@@ -140,7 +132,7 @@ const OrderingScreen = ({ state, suppliers, onOrder, turnIndex, seasonInfo, last
             <div className="h-14 md:h-16 bg-slate-900 flex items-center px-4 md:px-8 justify-between shadow-lg border-b border-slate-800 z-30 shrink-0">
                 <div className="flex items-center gap-2 md:gap-6">
                     <div className="bg-emerald-600 px-2 py-0.5 md:px-3 md:py-1 rounded-md font-bold text-xs md:text-base text-emerald-100 shadow-lg shadow-emerald-900/20">
-                        TURN {turnIndex}
+                        TURN {turnIndex} / 20
                     </div>
 
                     <div className={`flex items-center gap-2 px-2 py-0.5 md:px-3 md:py-1 rounded-full border ${seasonInfo.factor > 1.0 ? 'bg-cyan-900/30 border-cyan-500/50 text-cyan-300' : 'bg-yellow-900/30 border-yellow-500/50 text-yellow-300'}`}>

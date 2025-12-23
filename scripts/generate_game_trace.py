@@ -2,12 +2,11 @@
 Generate Game Traces for Multiple Scenarios
 
 This script:
-1. Loads the trained RL models:
-   - best_model_uwu.zip for simple, moderate, complex
-   - best_model.zip for extreme
-2. Generates 4 distinct traces with 30 initial inventory
-3. Adds seasonal info (season_name, season_factor) to each turn
-4. Saves them to src/assets/trace_{scenario}.json
+1. Loads the trained RL model (best_model_uwu.zip)
+2. Generates 3 distinct traces (Simple, Moderate, Complex)
+3. Moderate/Complex have more suppliers for added difficulty
+4. Adds seasonal info (season_name, season_factor) to each turn
+5. Saves them to src/assets/trace_{scenario}.json
 """
 
 import sys
@@ -28,11 +27,26 @@ from perishable_inventory_mdp.demand import PoissonDemand, NegativeBinomialDeman
 # Global Config
 SHELF_LIFE = 5
 EPISODE_LENGTH = 20
-FAST_LEAD_TIME = 1
-SLOW_LEAD_TIME = 3
-FAST_COST = 2.0
-SLOW_COST = 1.0
 INITIAL_INVENTORY = 30  # Start with 30 units (same as player)
+
+# Supplier configurations per scenario
+SUPPLIER_CONFIGS = {
+    "simple": [
+        {"id": 0, "name": "Fast Supplier", "lead_time": 1, "cost": 2.0},
+        {"id": 1, "name": "Slow Supplier", "lead_time": 3, "cost": 1.0}
+    ],
+    "moderate": [
+        {"id": 0, "name": "Express", "lead_time": 1, "cost": 2.5},
+        {"id": 1, "name": "Standard", "lead_time": 2, "cost": 1.5},
+        {"id": 2, "name": "Economy", "lead_time": 4, "cost": 0.8}
+    ],
+    "complex": [
+        {"id": 0, "name": "Premium", "lead_time": 1, "cost": 3.0},
+        {"id": 1, "name": "Express", "lead_time": 2, "cost": 2.0},
+        {"id": 2, "name": "Standard", "lead_time": 3, "cost": 1.2},
+        {"id": 3, "name": "Budget", "lead_time": 5, "cost": 0.6}
+    ]
+}
 
 # Scenario definitions with seasonal patterns
 SCENARIO_CONFIG = {
@@ -40,29 +54,19 @@ SCENARIO_CONFIG = {
         "base_demand": 10.0,
         "demand_type": "poisson",
         "seasonal_pattern": None,
-        "description": "Steady demand",
-        "model": "uwu"
+        "description": "Steady demand, 2 suppliers"
     },
     "moderate": {
-        "base_demand": 10.0,
+        "base_demand": 12.0,
         "demand_type": "negbin",
         "seasonal_pattern": None,
-        "description": "High variance demand",
-        "model": "uwu"
+        "description": "High variance, 3 suppliers"
     },
     "complex": {
-        "base_demand": 12.0,
+        "base_demand": 15.0,
         "demand_type": "poisson",
         "seasonal_pattern": "sinusoidal",
-        "description": "Seasonal demand waves",
-        "model": "uwu"
-    },
-    "extreme": {
-        "base_demand": 20.0,
-        "demand_type": "poisson",
-        "seasonal_pattern": "surges",
-        "description": "High demand with surges",
-        "model": "regular"  # Uses best_model.zip
+        "description": "Seasonal waves, 4 suppliers"
     }
 }
 
@@ -83,18 +87,6 @@ def get_season_info(step, demand, base_demand, scenario):
             season_name = "Spring"
         else:
             season_name = "Summer"
-            
-    elif pattern == "surges":
-        surge_threshold = base_demand * 1.5
-        if demand > surge_threshold:
-            season_name = "Surge!"
-            season_factor = demand / base_demand
-        elif demand > base_demand * 1.2:
-            season_name = "High Demand"
-            season_factor = demand / base_demand
-        else:
-            season_name = "Normal"
-            season_factor = 1.0
     else:
         season_factor = 1.0
         if demand > base_demand * 1.3:
@@ -112,56 +104,62 @@ def create_scenario_env(scenario, seed=42):
     np.random.seed(seed)
     
     config = SCENARIO_CONFIG[scenario]
+    suppliers = SUPPLIER_CONFIGS[scenario]
     base_demand = config["base_demand"]
     demand_type = config["demand_type"]
     
     if demand_type == "poisson":
         demand_process = PoissonDemand(base_rate=base_demand)
     elif demand_type == "negbin":
-        demand_process = NegativeBinomialDemand(n_successes=5, prob_success=0.33)
+        # Higher variance for moderate
+        demand_process = NegativeBinomialDemand(n_successes=4, prob_success=0.25)
     else:
         demand_process = PoissonDemand(base_rate=base_demand)
+    
+    # Get lead times and costs from supplier config
+    fast_lt = suppliers[0]["lead_time"]
+    slow_lt = suppliers[-1]["lead_time"]
+    fast_cost = suppliers[0]["cost"]
+    slow_cost = suppliers[-1]["cost"]
     
     env = create_gym_env(
         shelf_life=SHELF_LIFE,
         mean_demand=base_demand,
-        fast_lead_time=FAST_LEAD_TIME,
-        slow_lead_time=SLOW_LEAD_TIME,
-        fast_cost=FAST_COST,
-        slow_cost=SLOW_COST,
+        fast_lead_time=fast_lt,
+        slow_lead_time=slow_lt,
+        fast_cost=fast_cost,
+        slow_cost=slow_cost,
         demand_process=demand_process,
         enable_crisis=False
     )
-    return env
+    return env, suppliers
 
 
 def set_initial_inventory(env, inventory_qty):
     """Set initial inventory in the environment's internal state."""
-    # Access the internal MDP state via the wrapper
-    # The gym wrapper has 'current_state' after reset
     if hasattr(env, 'current_state') and env.current_state is not None:
-        # Add inventory to the freshest bucket (last index = shelf_life - 1)
         env.current_state.inventory[SHELF_LIFE - 1] = inventory_qty
     elif hasattr(env, 'mdp') and hasattr(env.mdp, 'current_state'):
         env.mdp.current_state.inventory[SHELF_LIFE - 1] = inventory_qty
 
 
-def generate_traces(models, output_dir):
-    scenarios = ["simple", "moderate", "complex", "extreme"]
+def generate_traces(model_path, output_dir):
+    print(f"Loading model from {model_path}...")
+    model = PPO.load(model_path)
+    
+    scenarios = ["simple", "moderate", "complex"]
     
     for scenario in scenarios:
         config = SCENARIO_CONFIG[scenario]
-        model_key = config["model"]
-        model = models[model_key]
+        suppliers = SUPPLIER_CONFIGS[scenario]
         
-        print(f"Generating trace for: {scenario} ({config['description']}) using {model_key} model...")
+        print(f"Generating trace for: {scenario} ({config['description']})...")
         
-        env = create_scenario_env(scenario)
+        env, _ = create_scenario_env(scenario)
         obs, info = env.reset(seed=42)
         
         # Set initial inventory to 30 (same as player starts with)
         set_initial_inventory(env, INITIAL_INVENTORY)
-        # Need to update observation after modifying state
         if hasattr(env, '_get_observation') and hasattr(env, 'current_state'):
             obs = env._get_observation(env.current_state)
         
@@ -172,7 +170,8 @@ def generate_traces(models, output_dir):
                 "episode_length": EPISODE_LENGTH,
                 "base_demand": config["base_demand"],
                 "description": config["description"],
-                "initial_inventory": INITIAL_INVENTORY
+                "initial_inventory": INITIAL_INVENTORY,
+                "suppliers": suppliers
             }
         }
         
@@ -190,15 +189,20 @@ def generate_traces(models, output_dir):
                 step, demand, config["base_demand"], scenario
             )
             
+            # Build RL action dict for all suppliers in this scenario
+            rl_action = {}
+            for i, s in enumerate(suppliers):
+                if i < len(action):
+                    rl_action[str(s["id"])] = float(action[i])
+                else:
+                    rl_action[str(s["id"])] = 0.0
+            
             turn_data = {
                 "step": step,
                 "demand": demand,
                 "season_name": season_name,
                 "season_factor": season_factor,
-                "rl_action": {
-                    "0": float(action[0]) if len(action) > 0 else 0,
-                    "1": float(action[1]) if len(action) > 1 else 0
-                },
+                "rl_action": rl_action,
                 "environment_outcome": {
                     "cost": cost,
                     "sales": float(info.get("sales", 0)),
@@ -221,17 +225,6 @@ def generate_traces(models, output_dir):
 
 
 if __name__ == "__main__":
-    # Load both models
-    MODEL_UWU_PATH = str(REPO_PATH / "best_model_uwu.zip")
-    MODEL_REGULAR_PATH = str(REPO_PATH / "best_model.zip")
-    
-    print("Loading models...")
-    models = {
-        "uwu": PPO.load(MODEL_UWU_PATH),
-        "regular": PPO.load(MODEL_REGULAR_PATH)
-    }
-    print("  > Loaded best_model_uwu.zip for simple/moderate/complex")
-    print("  > Loaded best_model.zip for extreme")
-    
+    MODEL_PATH = str(REPO_PATH / "best_model_uwu.zip")
     OUTPUT_DIR = str(Path(__file__).parent.parent / "src" / "assets")
-    generate_traces(models, OUTPUT_DIR)
+    generate_traces(MODEL_PATH, OUTPUT_DIR)

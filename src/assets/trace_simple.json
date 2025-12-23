@@ -345,7 +345,21 @@
     "scenario": "simple",
     "episode_length": 20,
     "base_demand": 10.0,
-    "description": "Steady demand",
-    "initial_inventory": 30
+    "description": "Steady demand, 2 suppliers",
+    "initial_inventory": 30,
+    "suppliers": [
+      {
+        "id": 0,
+        "name": "Fast Supplier",
+        "lead_time": 1,
+        "cost": 2.0
+      },
+      {
+        "id": 1,
+        "name": "Slow Supplier",
+        "lead_time": 3,
+        "cost": 1.0
+      }
+    ]
   }
 }
