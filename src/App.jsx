@@ -185,6 +185,7 @@ function App() {
       <ResultsScreen
         userHistory={userHistory}
         rlTrace={activeTrace}
+        scenario={scenario}
         onRestart={() => setGameState('SCENARIO_SELECT')}
       />
     );

@@ -1,5 +1,6 @@
-import React from 'react';
-import { Play, TrendingUp, Activity } from 'lucide-react';
+import React, { useState } from 'react';
+import { Play, TrendingUp, Activity, Trophy } from 'lucide-react';
+import LeaderboardModal from './LeaderboardModal';
 
 const ScenarioCard = ({ title, description, difficulty, suppliers, icon: Icon, color, onClick }) => (
     <div
@@ -17,6 +18,8 @@ const ScenarioCard = ({ title, description, difficulty, suppliers, icon: Icon, c
 );
 
 const StartScreen = ({ onSelectScenario }) => {
+    const [showLeaderboard, setShowLeaderboard] = useState(false);
+
     const scenarios = [
         {
             id: 'simple',
@@ -53,9 +56,20 @@ const StartScreen = ({ onSelectScenario }) => {
                 <h1 className="text-4xl md:text-5xl font-bold text-center mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
                     Pharma Tycoon
                 </h1>
-                <p className="text-center text-slate-400 mb-12 text-lg">
+                <p className="text-center text-slate-400 mb-8 text-lg">
                     Manage inventory, minimize costs, and beat the AI.
                 </p>
+
+                {/* Leaderboard Button */}
+                <div className="flex justify-center mb-8">
+                    <button
+                        onClick={() => setShowLeaderboard(true)}
+                        className="flex items-center gap-2 px-6 py-3 bg-yellow-600 hover:bg-yellow-500 text-white font-bold rounded-full shadow-lg transition-all hover:scale-105"
+                    >
+                        <Trophy size={20} />
+                        View Leaderboard
+                    </button>
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {scenarios.map((s) => (
@@ -67,6 +81,11 @@ const StartScreen = ({ onSelectScenario }) => {
                     ))}
                 </div>
             </div>
+
+            <LeaderboardModal
+                isOpen={showLeaderboard}
+                onClose={() => setShowLeaderboard(false)}
+            />
         </div>
     );
 };
