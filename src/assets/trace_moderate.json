@@ -6,9 +6,8 @@
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "0": 2.0,
-        "1": 4.0,
-        "2": 0.0
+        "1": 20.0,
+        "0": 20.0
       },
       "environment_outcome": {
         "cost": 75.5,
@@ -24,9 +23,8 @@
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "0": 1.0,
-        "1": 0.0,
-        "2": 0.0
+        "1": 10.0,
+        "0": 0.0
       },
       "environment_outcome": {
         "cost": 21.0,
@@ -42,9 +40,8 @@
       "season_name": "Low Demand",
       "season_factor": 1.0,
       "rl_action": {
-        "0": 1.0,
-        "1": 0.0,
-        "2": 0.0
+        "1": 10.0,
+        "0": 0.0
       },
       "environment_outcome": {
         "cost": 18.2,
@@ -60,9 +57,8 @@
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "0": 1.0,
-        "1": 0.0,
-        "2": 0.0
+        "1": 10.0,
+        "0": 0.0
       },
       "environment_outcome": {
         "cost": 10.8,
@@ -78,9 +74,8 @@
       "season_name": "High Demand",
       "season_factor": 1.0,
       "rl_action": {
-        "0": 2.0,
-        "1": 0.0,
-        "2": 0.0
+        "1": 20.0,
+        "0": 0.0
       },
       "environment_outcome": {
         "cost": 20.0,
@@ -96,9 +91,8 @@
       "season_name": "Low Demand",
       "season_factor": 1.0,
       "rl_action": {
-        "0": 1.0,
-        "1": 0.0,
-        "2": 0.0
+        "1": 10.0,
+        "0": 0.0
       },
       "environment_outcome": {
         "cost": 13.0,
@@ -114,9 +108,8 @@
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "0": 1.0,
-        "1": 0.0,
-        "2": 0.0
+        "1": 10.0,
+        "0": 0.0
       },
       "environment_outcome": {
         "cost": 13.0,
@@ -132,9 +125,8 @@
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "0": 1.0,
-        "1": 0.0,
-        "2": 0.0
+        "1": 10.0,
+        "0": 0.0
       },
       "environment_outcome": {
         "cost": 12.5,
@@ -150,9 +142,8 @@
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "0": 1.0,
-        "1": 0.0,
-        "2": 0.0
+        "1": 10.0,
+        "0": 0.0
       },
       "environment_outcome": {
         "cost": 16.0,
@@ -168,9 +159,8 @@
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "0": 1.0,
-        "1": 0.0,
-        "2": 0.0
+        "1": 10.0,
+        "0": 0.0
       },
       "environment_outcome": {
         "cost": 16.6,
@@ -186,9 +176,8 @@
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "0": 1.0,
-        "1": 0.0,
-        "2": 0.0
+        "1": 10.0,
+        "0": 0.0
       },
       "environment_outcome": {
         "cost": 16.0,
@@ -204,9 +193,8 @@
       "season_name": "Low Demand",
       "season_factor": 1.0,
       "rl_action": {
-        "0": 1.0,
-        "1": 0.0,
-        "2": 0.0
+        "1": 10.0,
+        "0": 0.0
       },
       "environment_outcome": {
         "cost": 17.2,
@@ -222,9 +210,8 @@
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "0": 1.0,
-        "1": 0.0,
-        "2": 0.0
+        "1": 10.0,
+        "0": 0.0
       },
       "environment_outcome": {
         "cost": 15.4,
@@ -240,9 +227,8 @@
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "0": 1.0,
-        "1": 0.0,
-        "2": 0.0
+        "1": 10.0,
+        "0": 0.0
       },
       "environment_outcome": {
         "cost": 13.6,
@@ -258,9 +244,8 @@
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "0": 2.0,
-        "1": 0.0,
-        "2": 0.0
+        "1": 20.0,
+        "0": 0.0
       },
       "environment_outcome": {
         "cost": 21.6,
@@ -276,9 +261,8 @@
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "0": 1.0,
-        "1": 0.0,
-        "2": 0.0
+        "1": 10.0,
+        "0": 0.0
       },
       "environment_outcome": {
         "cost": 11.5,
@@ -294,9 +278,8 @@
       "season_name": "Low Demand",
       "season_factor": 1.0,
       "rl_action": {
-        "0": 1.0,
-        "1": 0.0,
-        "2": 0.0
+        "1": 10.0,
+        "0": 0.0
       },
       "environment_outcome": {
         "cost": 13.0,
@@ -312,9 +295,8 @@
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "0": 1.0,
-        "1": 0.0,
-        "2": 0.0
+        "1": 10.0,
+        "0": 0.0
       },
       "environment_outcome": {
         "cost": 13.6,
@@ -330,9 +312,8 @@
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "0": 1.0,
-        "1": 0.0,
-        "2": 0.0
+        "1": 10.0,
+        "0": 0.0
       },
       "environment_outcome": {
         "cost": 18.6,
@@ -348,9 +329,8 @@
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "0": 1.0,
-        "1": 0.0,
-        "2": 0.0
+        "1": 10.0,
+        "0": 0.0
       },
       "environment_outcome": {
         "cost": 18.4,

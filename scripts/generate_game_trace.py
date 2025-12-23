@@ -189,13 +189,9 @@ def generate_traces(model_path, output_dir):
                 step, demand, config["base_demand"], scenario
             )
             
-            # Build RL action dict for all suppliers in this scenario
-            rl_action = {}
-            for i, s in enumerate(suppliers):
-                if i < len(action):
-                    rl_action[str(s["id"])] = float(action[i])
-                else:
-                    rl_action[str(s["id"])] = 0.0
+            # Build RL action dict from decoded orders (not raw action indices)
+            decoded_orders = info.get("orders", {})
+            rl_action = {str(k): float(v) for k, v in decoded_orders.items()}
             
             turn_data = {
                 "step": step,
