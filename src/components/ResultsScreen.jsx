@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Trophy, AlertTriangle, RotateCcw, Send, CheckCircle, RefreshCw, Sparkles, Star, Zap } from 'lucide-react';
 import { submitScore, fetchLeaderboard } from '../services/leaderboard';
+import useSoundEffects from '../hooks/useSoundEffects';
 
 const ResultsScreen = ({ userHistory, rlTrace, onRestart, scenario }) => {
     const [playerName, setPlayerName] = useState('');
@@ -9,6 +10,7 @@ const ResultsScreen = ({ userHistory, rlTrace, onRestart, scenario }) => {
     const [submitting, setSubmitting] = useState(false);
     const [leaderboard, setLeaderboard] = useState([]);
     const [loadingLeaderboard, setLoadingLeaderboard] = useState(true);
+    const { victory, defeat, confirm, click } = useSoundEffects();
 
     const currentScenario = rlTrace?.metadata?.scenario || scenario || 'simple';
 
@@ -47,9 +49,15 @@ const ResultsScreen = ({ userHistory, rlTrace, onRestart, scenario }) => {
 
     const betterThanRL = userTotalCost < rlTotalCost;
 
-    // Load leaderboard on mount
+    // Load leaderboard on mount and play result sound
     useEffect(() => {
         loadLeaderboard();
+        // Play victory or defeat sound based on result
+        if (userTotalCost < rlTotalCost) {
+            victory();
+        } else {
+            defeat();
+        }
     }, [currentScenario]);
 
     const loadLeaderboard = async () => {
@@ -62,6 +70,7 @@ const ResultsScreen = ({ userHistory, rlTrace, onRestart, scenario }) => {
     const handleSubmitScore = async () => {
         if (!playerName.trim()) return;
 
+        confirm();
         setSubmitting(true);
         await submitScore(playerName.trim(), currentScenario, userTotalCost, betterThanRL);
         setSubmitted(true);
@@ -263,7 +272,7 @@ const ResultsScreen = ({ userHistory, rlTrace, onRestart, scenario }) => {
 
                 <div className="pb-4 sm:pb-6 flex justify-center shrink-0">
                     <button
-                        onClick={onRestart}
+                        onClick={() => { click(); onRestart(); }}
                         className="bg-gradient-to-b from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-white px-4 py-2.5 sm:px-6 sm:py-3 lg:px-8 lg:py-4 rounded-lg sm:rounded-xl border border-slate-600 shadow-[0_3px_0_#1e293b] sm:shadow-[0_4px_0_#1e293b] active:shadow-none active:translate-y-[3px] sm:active:translate-y-[4px] transition-all flex items-center gap-2 sm:gap-3 font-black text-sm sm:text-base lg:text-lg"
                     >
                         <RotateCcw size={16} className="sm:hidden" />

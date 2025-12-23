@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Package, Truck, Calendar, ShoppingCart, AlertTriangle, TrendingUp, Zap, Clock, DollarSign } from 'lucide-react';
+import useSoundEffects from '../hooks/useSoundEffects';
 
 // Supplier identity configuration
 const SUPPLIER_IDENTITY = {
@@ -50,7 +51,7 @@ const SUPPLIER_IDENTITY = {
 };
 
 // Stepper Component with arcade-style buttons
-const OrderStepper = ({ value, onChange, supplier }) => {
+const OrderStepper = ({ value, onChange, supplier, playOrderPlus, playOrderMinus }) => {
     const [isAnimating, setIsAnimating] = useState(false);
     const identity = SUPPLIER_IDENTITY[supplier.id] || SUPPLIER_IDENTITY[0];
 
@@ -59,6 +60,12 @@ const OrderStepper = ({ value, onChange, supplier }) => {
         onChange(newValue);
         setIsAnimating(true);
         setTimeout(() => setIsAnimating(false), 250);
+        // Play appropriate sound
+        if (delta > 0) {
+            playOrderPlus();
+        } else if (value > 0) { // Only play minus sound if we're actually decreasing
+            playOrderMinus();
+        }
     };
 
     return (
@@ -147,12 +154,14 @@ const OrderingScreen = ({ state, suppliers, onOrder, turnIndex, seasonInfo, last
         Object.fromEntries(suppliers.map(s => [s.id, 0]))
     );
     const confirmBtnRef = useRef(null);
+    const { orderPlus, orderMinus, confirm } = useSoundEffects();
 
     const handleOrderChange = (id, val) => {
         setOrders(prev => ({ ...prev, [id]: val }));
     };
 
     const submitOrder = () => {
+        confirm();
         onOrder(orders);
     };
 
@@ -360,6 +369,8 @@ const OrderingScreen = ({ state, suppliers, onOrder, turnIndex, seasonInfo, last
                                                 value={orders[s.id]}
                                                 onChange={(val) => handleOrderChange(s.id, val)}
                                                 supplier={s}
+                                                playOrderPlus={orderPlus}
+                                                playOrderMinus={orderMinus}
                                             />
                                         </div>
                                     );

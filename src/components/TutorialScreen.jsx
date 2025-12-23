@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Package, TrendingDown, AlertTriangle, ChevronRight, ChevronLeft, X, Sparkles, DollarSign } from 'lucide-react';
+import useSoundEffects from '../hooks/useSoundEffects';
 
 const TUTORIAL_STEPS = [
     {
@@ -38,6 +39,7 @@ const TUTORIAL_STEPS = [
 
 const TutorialScreen = ({ onComplete, onSkip }) => {
     const [currentStep, setCurrentStep] = useState(0);
+    const { nextStep, confirm, click } = useSoundEffects();
     const step = TUTORIAL_STEPS[currentStep];
     const Icon = step.icon;
     const isLastStep = currentStep === TUTORIAL_STEPS.length - 1;
@@ -45,16 +47,24 @@ const TutorialScreen = ({ onComplete, onSkip }) => {
 
     const handleNext = () => {
         if (isLastStep) {
+            confirm();
             onComplete();
         } else {
+            nextStep();
             setCurrentStep(prev => prev + 1);
         }
     };
 
     const handlePrev = () => {
         if (!isFirstStep) {
+            nextStep();
             setCurrentStep(prev => prev - 1);
         }
+    };
+
+    const handleSkip = () => {
+        click();
+        onSkip();
     };
 
     return (
@@ -65,7 +75,7 @@ const TutorialScreen = ({ onComplete, onSkip }) => {
 
             {/* Skip Button */}
             <button
-                onClick={onSkip}
+                onClick={handleSkip}
                 className="absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-1.5 text-slate-500 hover:text-white transition-colors text-sm font-medium bg-slate-800/50 hover:bg-slate-700/50 px-3 py-1.5 rounded-lg"
             >
                 <span>Skip Tutorial</span>

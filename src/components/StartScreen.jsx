@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Play, TrendingUp, Activity, Trophy, Sparkles, Zap } from 'lucide-react';
 import LeaderboardModal from './LeaderboardModal';
+import useSoundEffects from '../hooks/useSoundEffects';
 
-const ScenarioCard = ({ title, description, difficulty, suppliers, icon: Icon, colorClasses, onClick }) => {
+const ScenarioCard = ({ title, description, difficulty, suppliers, icon: Icon, colorClasses, onClick, playSound }) => {
     return (
         <div
-            onClick={onClick}
+            onClick={() => { playSound(); onClick(); }}
             className={`
                 relative overflow-hidden
                 bg-gradient-to-br from-slate-800 to-slate-900 
@@ -55,6 +56,7 @@ const ScenarioCard = ({ title, description, difficulty, suppliers, icon: Icon, c
 
 const StartScreen = ({ onSelectScenario }) => {
     const [showLeaderboard, setShowLeaderboard] = useState(false);
+    const { click } = useSoundEffects();
 
     const scenarios = [
         {
@@ -132,7 +134,7 @@ const StartScreen = ({ onSelectScenario }) => {
                 {/* Leaderboard Button */}
                 <div className="flex justify-center mb-6 sm:mb-8 lg:mb-10">
                     <button
-                        onClick={() => setShowLeaderboard(true)}
+                        onClick={() => { click(); setShowLeaderboard(true); }}
                         className="flex items-center gap-2 sm:gap-3 px-4 py-2.5 sm:px-6 sm:py-3 lg:px-8 lg:py-4 bg-gradient-to-b from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-white font-black rounded-lg sm:rounded-xl shadow-[0_4px_0_#b45309] sm:shadow-[0_6px_0_#b45309] active:shadow-none active:translate-y-[4px] sm:active:translate-y-[6px] transition-all text-sm sm:text-base lg:text-lg"
                     >
                         <Trophy size={18} className="sm:hidden" />
@@ -148,6 +150,7 @@ const StartScreen = ({ onSelectScenario }) => {
                             key={s.id}
                             {...s}
                             onClick={() => onSelectScenario(s.id)}
+                            playSound={click}
                         />
                     ))}
                 </div>

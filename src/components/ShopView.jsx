@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { XCircle, CheckCircle, Package, Snowflake, Sun, DollarSign, Activity, Sparkles } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import useSoundEffects from '../hooks/useSoundEffects';
 
 // Import merged scene (4K resolution)
 import pharmacyScene from '../assets/pharmacy_scene.jpg';
@@ -19,20 +20,49 @@ const BUBBLE_POSITION = {
 
 const ShopView = ({ turnResult, seasonInfo, onNextTurn, aiComparison, history, rlTrace }) => {
     const [animationStep, setAnimationStep] = useState('idle');
+    const { arrival, demand, sale, miss, spoil, click } = useSoundEffects();
+    const soundsPlayedRef = useRef({ summary: false });
 
     useEffect(() => {
         if (!turnResult) return;
 
+        // Reset sound tracking for new turn
+        soundsPlayedRef.current = { summary: false };
+
         setAnimationStep('arrival');
 
-        const t1 = setTimeout(() => setAnimationStep('demand'), 1500);
-        const t2 = setTimeout(() => setAnimationStep('summary'), 3500);
+        // Play arrival sound if there are arrivals
+        if (turnResult.arrivals > 0) {
+            arrival();
+        }
+
+        const t1 = setTimeout(() => {
+            setAnimationStep('demand');
+            demand();
+        }, 1500);
+
+        const t2 = setTimeout(() => {
+            setAnimationStep('summary');
+            // Play outcome sounds based on results
+            if (!soundsPlayedRef.current.summary) {
+                soundsPlayedRef.current.summary = true;
+                if (turnResult.sales > 0) {
+                    sale();
+                }
+                if (turnResult.demand_realized - turnResult.sales > 0) {
+                    setTimeout(() => miss(), 200);
+                }
+                if (turnResult.spoiled > 0) {
+                    setTimeout(() => spoil(), 400);
+                }
+            }
+        }, 3500);
 
         return () => {
             clearTimeout(t1);
             clearTimeout(t2);
         };
-    }, [turnResult]);
+    }, [turnResult, arrival, demand, sale, miss, spoil]);
 
     if (!turnResult) return <div className="flex h-screen items-center justify-center bg-slate-900 text-white">Loading...</div>;
 
@@ -216,7 +246,7 @@ const ShopView = ({ turnResult, seasonInfo, onNextTurn, aiComparison, history, r
                 <div className="p-2 sm:p-4 lg:p-6 bg-slate-950 border-t border-slate-800 flex-shrink-0">
                     {animationStep === 'summary' ? (
                         <button
-                            onClick={onNextTurn}
+                            onClick={() => { click(); onNextTurn(); }}
                             className="w-full bg-gradient-to-b from-blue-500 to-blue-700 hover:from-blue-400 hover:to-blue-600 text-white font-black py-2.5 sm:py-3 lg:py-4 xl:py-5 px-4 sm:px-6 rounded-lg sm:rounded-xl shadow-[0_4px_0_#1d4ed8] sm:shadow-[0_6px_0_#1d4ed8] active:shadow-none active:translate-y-[4px] sm:active:translate-y-[6px] transition-all flex items-center justify-center gap-2 sm:gap-3 text-sm sm:text-base lg:text-lg xl:text-xl"
                         >
                             <Sparkles size={16} className="sm:hidden text-yellow-300" />
