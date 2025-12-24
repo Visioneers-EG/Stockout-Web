@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Package, TrendingDown, AlertTriangle, ChevronRight, ChevronLeft, X, Sparkles, DollarSign } from 'lucide-react';
+import { Package, TrendingDown, AlertTriangle, ChevronRight, ChevronLeft, X, Sparkles, DollarSign, Zap } from 'lucide-react';
 import useSoundEffects from '../hooks/useSoundEffects';
 
 const TUTORIAL_STEPS = [
@@ -28,12 +28,20 @@ const TUTORIAL_STEPS = [
         tip: 'Too much stock = spoilage. Too little = angry customers!',
     },
     {
+        id: 'events',
+        title: 'Market Events',
+        icon: Zap,
+        iconColor: 'text-red-400',
+        content: 'Watch out for 📈 Demand Surges (2x demand) and 📉 Slumps (0.5x demand). These happen randomly!',
+        tip: 'Events show an "end chance" that increases each turn. Prepare before they hit!',
+    },
+    {
         id: 'goal',
         title: 'Your Goal',
         icon: TrendingDown,
         iconColor: 'text-emerald-400',
-        content: 'Complete 20 days. Green = beating AI. Can you finish with the lowest cost?',
-        tip: 'Watch for seasonal demand changes!',
+        content: 'Complete all turns. Green = beating AI. Can you finish with the lowest cost?',
+        tip: 'The AI plays without events - can you beat it despite the challenges?',
     },
 ];
 
