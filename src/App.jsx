@@ -7,6 +7,7 @@ import ShopView from './components/ShopView';
 import ResultsScreen from './components/ResultsScreen';
 import StartScreen from './components/StartScreen';
 import TutorialScreen from './components/TutorialScreen';
+import ConfirmationModal from './components/ConfirmationModal';
 
 // Load Traces
 import traceSimple from './assets/trace_simple.json';
@@ -39,6 +40,7 @@ function App() {
   const [turnIndex, setTurnIndex] = useState(0);
   const [scenario, setScenario] = useState('simple');
   const [activeTrace, setActiveTrace] = useState(traceSimple);
+  const [showExitModal, setShowExitModal] = useState(false);
 
   // Get suppliers from trace metadata or use defaults
   const suppliers = useMemo(() => {
@@ -67,6 +69,24 @@ function App() {
     } else {
       setGameState('TUTORIAL');
     }
+  };
+
+  // Handle Back to Menu with Confirmation
+  const handleBack = () => {
+    if (turnIndex >= 1) {
+      setShowExitModal(true);
+    } else {
+      setGameState('SCENARIO_SELECT');
+    }
+  };
+
+  const confirmExit = () => {
+    setShowExitModal(false);
+    setGameState('SCENARIO_SELECT');
+  };
+
+  const cancelExit = () => {
+    setShowExitModal(false);
   };
 
   // Handle tutorial completion
@@ -171,15 +191,28 @@ function App() {
       }
     }
 
+    const totalPaidCost = userHistory.reduce((sum, h) => sum + h.cost, 0);
+
     return (
-      <OrderingScreen
-        state={inventoryState}
-        suppliers={suppliers}
-        onOrder={handleOrder}
-        turnIndex={turnIndex + 1}
-        seasonInfo={seasonInfo}
-        lastTurnMetrics={lastTurnMetrics}
-      />
+      <>
+        <OrderingScreen
+          state={inventoryState}
+          suppliers={suppliers}
+          onOrder={handleOrder}
+          turnIndex={turnIndex + 1}
+          seasonInfo={seasonInfo}
+          lastTurnMetrics={lastTurnMetrics}
+          onBack={handleBack}
+          totalPaidCost={totalPaidCost}
+        />
+        <ConfirmationModal
+          isOpen={showExitModal}
+          title="Exit Game?"
+          message="Are you sure you want to quit? All current progress will be lost and you'll have to start over."
+          onConfirm={confirmExit}
+          onCancel={cancelExit}
+        />
+      </>
     );
   }
 
@@ -197,14 +230,24 @@ function App() {
     } : null;
 
     return (
-      <ShopView
-        turnResult={lastTurnResult}
-        seasonInfo={seasonInfo}
-        onNextTurn={handleNextTurn}
-        aiComparison={aiComparison}
-        history={userHistory}
-        rlTrace={activeTrace}
-      />
+      <>
+        <ShopView
+          turnResult={lastTurnResult}
+          seasonInfo={seasonInfo}
+          onNextTurn={handleNextTurn}
+          aiComparison={aiComparison}
+          history={userHistory}
+          rlTrace={activeTrace}
+          onBack={handleBack}
+        />
+        <ConfirmationModal
+          isOpen={showExitModal}
+          title="Exit Game?"
+          message="Are you sure you want to quit? All current progress will be lost and you'll have to start over."
+          onConfirm={confirmExit}
+          onCancel={cancelExit}
+        />
+      </>
     );
   }
 
@@ -219,7 +262,19 @@ function App() {
     );
   }
 
-  return <div className="flex h-screen items-center justify-center bg-black text-white">Initializing Simulation...</div>;
+  return (
+    <>
+      <div className="flex h-screen items-center justify-center bg-black text-white">Initializing Simulation...</div>
+
+      <ConfirmationModal
+        isOpen={showExitModal}
+        title="Exit Game?"
+        message="Are you sure you want to quit? All current progress will be lost and you'll have to start over."
+        onConfirm={confirmExit}
+        onCancel={cancelExit}
+      />
+    </>
+  );
 }
 
 export default App;

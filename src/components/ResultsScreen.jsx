@@ -40,30 +40,57 @@ const ResultsScreen = ({ userHistory, rlTrace, onRestart, scenario }) => {
     const rlFillRate = calculateFillRate(rlTurns);
     const rlSpoilage = calculateSpoilage(rlTurns);
 
-    // Prepare Chart Data
-    const chartData = userHistory.map((h, i) => ({
-        turn: i + 1,
-        UserCost: h.cost,
-        RLCost: rlTurns[i]?.cost || 0
-    }));
+    // Prepare Chart Data - Cumulative Cost
+    const chartData = userHistory.map((h, i) => {
+        const userCum = userHistory.slice(0, i + 1).reduce((sum, item) => sum + item.cost, 0);
+        const rlCum = rlTrace.turns.slice(0, i + 1).reduce((sum, item) => sum + item.environment_outcome.cost, 0);
+        return {
+            turn: i + 1,
+            UserCost: userCum,
+            RLCost: rlCum
+        };
+    });
 
-    const betterThanRL = userTotalCost < rlTotalCost;
+    const isDraw = Math.abs(userTotalCost - rlTotalCost) < 0.01;
+    const betterThanRL = userTotalCost < rlTotalCost && !isDraw;
 
     // Load leaderboard on mount and play result sound
     useEffect(() => {
         loadLeaderboard();
-        // Play victory or defeat sound based on result
-        if (userTotalCost < rlTotalCost) {
+        // Play victory, defeat, or neutral sound based on result
+        if (betterThanRL) {
             victory();
+        } else if (isDraw) {
+            // Use sale sound as a neutral positive, or add a specific draw sound if available
+            // reusing victory but maybe less intense would be ideal, or just sale
+            confirm();
         } else {
             defeat();
         }
-    }, [currentScenario]);
+    }, [currentScenario, betterThanRL, isDraw]);
 
     const loadLeaderboard = async () => {
         setLoadingLeaderboard(true);
         const data = await fetchLeaderboard(currentScenario);
-        setLeaderboard(data);
+        // Post-process ranks for ties
+        const rankedData = data.map((entry, i) => {
+            if (i > 0 && Math.abs(entry.score - data[i - 1].score) < 0.01) {
+                return { ...entry, rank: data[i - 1].rank }; // Copy rank from previous if score matches
+            }
+            return { ...entry, rank: i + 1 }; // Default ranking (may need adjustment if we want dense ranking, but this is standard competition ranking 1, 1, 3)
+        });
+
+        // Correct ranks recursively (the map above might miss if 3 people tie, the 3rd one gets rank from 2nd who got from 1st so it works in order)
+        const processedData = [];
+        for (let i = 0; i < data.length; i++) {
+            let rank = i + 1;
+            if (i > 0 && Math.abs(data[i].score - data[i - 1].score) < 0.01) {
+                rank = processedData[i - 1].rank;
+            }
+            processedData.push({ ...data[i], rank });
+        }
+
+        setLeaderboard(processedData);
         setLoadingLeaderboard(false);
     };
 
@@ -72,6 +99,9 @@ const ResultsScreen = ({ userHistory, rlTrace, onRestart, scenario }) => {
 
         confirm();
         setSubmitting(true);
+        // Treat draw as "beat AI" for submission purposes? Or strictly better? 
+        // Usually "beat AI" means strictly better. Let's send false for draw to be safe, or check backend requirement.
+        // Assuming strict inequality for "beat".
         await submitScore(playerName.trim(), currentScenario, userTotalCost, betterThanRL);
         setSubmitted(true);
         setSubmitting(false);
@@ -101,6 +131,12 @@ const ResultsScreen = ({ userHistory, rlTrace, onRestart, scenario }) => {
                             VICTORY!
                             <Trophy className="text-yellow-400 animate-bounce w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10" />
                         </>
+                    ) : isDraw ? (
+                        <>
+                            <RotateCcw className="text-orange-400 w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10" />
+                            DRAW!
+                            <RotateCcw className="text-orange-400 w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10" />
+                        </>
                     ) : (
                         <>
                             <Zap className="text-amber-400 w-5 h-5 sm:w-7 sm:h-7 lg:w-9 lg:h-9" />
@@ -112,17 +148,20 @@ const ResultsScreen = ({ userHistory, rlTrace, onRestart, scenario }) => {
                 {betterThanRL && (
                     <p className="text-emerald-400 font-bold mt-1 sm:mt-2 animate-pulse text-xs sm:text-sm lg:text-base">🎉 You outperformed the AI! 🎉</p>
                 )}
+                {isDraw && (
+                    <p className="text-orange-400 font-bold mt-1 sm:mt-2 text-xs sm:text-sm lg:text-base">You matched the AI's performance!</p>
+                )}
             </div>
 
             <div className="relative z-10 flex-1 w-full max-w-6xl flex flex-col gap-2 sm:gap-3 lg:gap-4">
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 lg:gap-4 shrink-0">
                     {/* Main Scorecard */}
-                    <div className={`p-3 sm:p-4 lg:p-6 rounded-xl sm:rounded-2xl border-2 flex flex-col items-center justify-center ${betterThanRL ? 'bg-gradient-to-br from-emerald-900/50 to-green-900/30 border-emerald-500/50' : 'bg-slate-800 border-slate-700'}`}>
+                    <div className={`p-3 sm:p-4 lg:p-6 rounded-xl sm:rounded-2xl border-2 flex flex-col items-center justify-center ${betterThanRL ? 'bg-gradient-to-br from-emerald-900/50 to-green-900/30 border-emerald-500/50' : isDraw ? 'bg-gradient-to-br from-orange-900/50 to-amber-900/30 border-orange-500/50' : 'bg-slate-800 border-slate-700'}`}>
                         <div className="text-[10px] sm:text-xs lg:text-sm text-slate-400 mb-1 sm:mb-2 font-bold uppercase tracking-wider">You vs AI</div>
 
                         <div className="flex items-end gap-2 mb-2 sm:mb-3">
-                            <span className={`text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black ${betterThanRL ? 'text-emerald-400' : 'text-white'}`}>
+                            <span className={`text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black ${betterThanRL ? 'text-emerald-400' : isDraw ? 'text-orange-400' : 'text-white'}`}>
                                 ${userTotalCost.toFixed(2)}
                             </span>
                         </div>
@@ -138,6 +177,13 @@ const ResultsScreen = ({ userHistory, rlTrace, onRestart, scenario }) => {
                                 <Trophy size={20} className="hidden sm:block lg:hidden text-yellow-300" />
                                 <Trophy size={24} className="hidden lg:block text-yellow-300" />
                                 YOU BEAT THE AI!
+                            </div>
+                        ) : isDraw ? (
+                            <div className="bg-gradient-to-r from-orange-500 to-amber-600 text-white px-3 py-2 sm:px-4 sm:py-2.5 lg:px-6 lg:py-3 rounded-lg sm:rounded-xl flex items-center gap-1.5 sm:gap-2 font-black text-xs sm:text-sm lg:text-lg shadow-lg">
+                                <RotateCcw size={16} className="sm:hidden" />
+                                <RotateCcw size={20} className="hidden sm:block lg:hidden" />
+                                <RotateCcw size={24} className="hidden lg:block" />
+                                IT'S A TIE!
                             </div>
                         ) : (
                             <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-3 py-2 sm:px-4 sm:py-2.5 lg:px-6 lg:py-3 rounded-lg sm:rounded-xl flex items-center gap-1.5 sm:gap-2 font-black text-xs sm:text-sm lg:text-lg shadow-lg">
@@ -218,7 +264,7 @@ const ResultsScreen = ({ userHistory, rlTrace, onRestart, scenario }) => {
                             <div className="space-y-1.5 sm:space-y-2 overflow-y-auto max-h-28 sm:max-h-36">
                                 {leaderboard.slice(0, 5).map((entry, i) => (
                                     <div key={i} className={`flex items-center gap-2 sm:gap-3 text-xs sm:text-sm p-1.5 sm:p-2 rounded-lg ${i === 0 ? 'bg-yellow-900/30 border border-yellow-500/30' : 'bg-slate-700/50'}`}>
-                                        <span className={`w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center rounded-full font-black text-[10px] sm:text-xs ${i === 0 ? 'bg-yellow-500 text-yellow-900' : i === 1 ? 'bg-slate-300 text-slate-800' : i === 2 ? 'bg-amber-600 text-white' : 'bg-slate-600 text-slate-300'}`}>
+                                        <span className={`w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center rounded-full font-black text-[10px] sm:text-xs ${entry.rank === 1 ? 'bg-yellow-500 text-yellow-900' : entry.rank === 2 ? 'bg-slate-300 text-slate-800' : entry.rank === 3 ? 'bg-amber-600 text-white' : 'bg-slate-600 text-slate-300'}`}>
                                             {entry.rank}
                                         </span>
                                         <span className="flex-1 truncate text-white font-bold">{entry.name}</span>
@@ -255,7 +301,7 @@ const ResultsScreen = ({ userHistory, rlTrace, onRestart, scenario }) => {
                     <h3 className="text-slate-400 mb-2 sm:mb-3 font-black text-[10px] sm:text-xs lg:text-sm uppercase tracking-wider flex items-center gap-1.5 sm:gap-2">
                         <Sparkles size={12} className="sm:hidden text-yellow-400" />
                         <Sparkles size={14} className="hidden sm:block text-yellow-400" />
-                        Cost Per Turn
+                        Cumulative Cost
                     </h3>
                     <ResponsiveContainer width="100%" height="85%">
                         <LineChart data={chartData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>

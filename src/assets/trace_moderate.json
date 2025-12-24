@@ -355,13 +355,13 @@
         "cost": 2.5
       },
       {
-        "id": 1,
+        "id": 2,
         "name": "Standard",
         "lead_time": 2,
         "cost": 1.5
       },
       {
-        "id": 2,
+        "id": 1,
         "name": "Economy",
         "lead_time": 4,
         "cost": 0.8

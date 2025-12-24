@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { XCircle, CheckCircle, Package, Snowflake, Sun, DollarSign, Activity, Sparkles } from 'lucide-react';
+import { XCircle, CheckCircle, Package, Snowflake, Sun, DollarSign, Activity, Sparkles, ArrowLeft } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import useSoundEffects from '../hooks/useSoundEffects';
 
@@ -18,7 +18,7 @@ const BUBBLE_POSITION = {
 // ============================================================
 
 
-const ShopView = ({ turnResult, seasonInfo, onNextTurn, aiComparison, history, rlTrace }) => {
+const ShopView = ({ turnResult, seasonInfo, onNextTurn, aiComparison, history, rlTrace, onBack }) => {
     const [animationStep, setAnimationStep] = useState('idle');
     const { arrival, demand, sale, miss, spoil, click } = useSoundEffects();
     const soundsPlayedRef = useRef({ summary: false });
@@ -177,12 +177,21 @@ const ShopView = ({ turnResult, seasonInfo, onNextTurn, aiComparison, history, r
             {/* RIGHT: Daily Report Sidebar */}
             <div className="w-full lg:w-80 xl:w-96 bg-gradient-to-b from-slate-900 to-slate-950 text-white flex flex-col shadow-2xl z-20 h-[45%] sm:h-[40%] lg:h-full border-l border-slate-800 shrink-0">
                 <div className="px-2 py-2 sm:px-4 sm:py-3 lg:p-6 border-b border-slate-800 bg-slate-950 flex justify-between items-center">
-                    <div>
-                        <h2 className="text-sm sm:text-base lg:text-xl font-black tracking-widest text-slate-200 flex items-center gap-1.5 sm:gap-2">
-                            <Sparkles className="text-yellow-400 w-4 h-4 sm:w-5 sm:h-5" />
-                            DAILY REPORT
-                        </h2>
-                        <div className="hidden lg:block text-xs text-slate-500 mt-1">Market simulation results</div>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={onBack}
+                            className="p-1 sm:p-2 hover:bg-slate-800 rounded-full transition-colors text-slate-400 hover:text-white"
+                            title="Back to Home"
+                        >
+                            <ArrowLeft size={16} className="sm:w-5 sm:h-5" />
+                        </button>
+                        <div>
+                            <h2 className="text-sm sm:text-base lg:text-xl font-black tracking-widest text-slate-200 flex items-center gap-1.5 sm:gap-2">
+                                <Sparkles className="text-yellow-400 w-4 h-4 sm:w-5 sm:h-5" />
+                                DAILY REPORT
+                            </h2>
+                            <div className="hidden lg:block text-xs text-slate-500 mt-1">Market simulation results</div>
+                        </div>
                     </div>
                     <div className="flex lg:hidden items-center gap-1.5 sm:gap-2 bg-slate-800 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded text-[10px] sm:text-xs">
                         {seasonInfo.factor > 1.0 ? <Snowflake size={10} className="sm:hidden text-cyan-300" /> : <Sun size={10} className="sm:hidden text-yellow-400" />}

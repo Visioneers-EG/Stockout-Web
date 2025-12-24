@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Package, Truck, Calendar, ShoppingCart, AlertTriangle, TrendingUp, Zap, Clock, DollarSign } from 'lucide-react';
+import { Package, Truck, Calendar, ShoppingCart, AlertTriangle, TrendingUp, Zap, Clock, DollarSign, ArrowLeft } from 'lucide-react';
 import useSoundEffects from '../hooks/useSoundEffects';
 
 // Supplier identity configuration
@@ -51,7 +51,7 @@ const SUPPLIER_IDENTITY = {
 };
 
 // Stepper Component with arcade-style buttons
-const OrderStepper = ({ value, onChange, supplier, playOrderPlus, playOrderMinus }) => {
+const OrderStepper = ({ value, onChange, supplier, playOrderPlus, playOrderMinus, stepSize = 5 }) => {
     const [isAnimating, setIsAnimating] = useState(false);
     const identity = SUPPLIER_IDENTITY[supplier.id] || SUPPLIER_IDENTITY[0];
 
@@ -72,7 +72,7 @@ const OrderStepper = ({ value, onChange, supplier, playOrderPlus, playOrderMinus
         <div className="flex items-center justify-center gap-1 sm:gap-2">
             {/* Minus Button */}
             <button
-                onClick={() => handleChange(-5)}
+                onClick={() => handleChange(-stepSize)}
                 disabled={value === 0}
                 className={`
                     flex items-center justify-center 
@@ -106,7 +106,7 @@ const OrderStepper = ({ value, onChange, supplier, playOrderPlus, playOrderMinus
 
             {/* Plus Button */}
             <button
-                onClick={() => handleChange(5)}
+                onClick={() => handleChange(stepSize)}
                 className={`
                     flex items-center justify-center 
                     w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 
@@ -149,7 +149,7 @@ const SupplierAvatar = ({ identity, size = 'md' }) => {
     );
 };
 
-const OrderingScreen = ({ state, suppliers, onOrder, turnIndex, seasonInfo, lastTurnMetrics }) => {
+const OrderingScreen = ({ state, suppliers, onOrder, turnIndex, seasonInfo, lastTurnMetrics, onBack, totalPaidCost = 0 }) => {
     const [orders, setOrders] = useState(
         Object.fromEntries(suppliers.map(s => [s.id, 0]))
     );
@@ -275,6 +275,14 @@ const OrderingScreen = ({ state, suppliers, onOrder, turnIndex, seasonInfo, last
             {/* Top Header */}
             <div className="h-12 sm:h-14 lg:h-16 bg-slate-900 flex items-center px-2 sm:px-4 lg:px-8 justify-between shadow-lg border-b border-slate-800 z-30 shrink-0">
                 <div className="flex items-center gap-2 sm:gap-4 lg:gap-6">
+                    <button
+                        onClick={onBack}
+                        className="p-1 sm:p-2 hover:bg-slate-800 rounded-full transition-colors text-slate-400 hover:text-white"
+                        title="Back to Home"
+                    >
+                        <ArrowLeft size={20} className="sm:w-6 sm:h-6" />
+                    </button>
+
                     <div className="bg-gradient-to-r from-emerald-600 to-emerald-500 px-2 py-1 sm:px-3 sm:py-1.5 lg:px-4 lg:py-2 rounded-md sm:rounded-lg font-black text-xs sm:text-sm lg:text-lg text-white shadow-lg shadow-emerald-900/30 flex items-center gap-1 sm:gap-2">
                         <Zap size={12} className="sm:hidden text-yellow-300" />
                         <Zap size={16} className="hidden sm:block text-yellow-300" />
@@ -292,6 +300,10 @@ const OrderingScreen = ({ state, suppliers, onOrder, turnIndex, seasonInfo, last
 
                 {/* Stats */}
                 <div className="flex items-center gap-2 sm:gap-4 lg:gap-8">
+                    <div className="text-right">
+                        <div className="text-[8px] sm:text-[10px] uppercase tracking-widest text-slate-400 font-bold">Cost So Far</div>
+                        <div className="font-mono text-sm sm:text-lg lg:text-2xl font-bold text-blue-400">${Math.round(totalPaidCost)}</div>
+                    </div>
                     <div className="text-right">
                         <div className="text-[8px] sm:text-[10px] uppercase tracking-widest text-slate-400 font-bold">Stock</div>
                         <div className="font-mono text-sm sm:text-lg lg:text-2xl font-bold text-emerald-400">{Math.round(state.total_inventory)}</div>
@@ -324,10 +336,10 @@ const OrderingScreen = ({ state, suppliers, onOrder, turnIndex, seasonInfo, last
                 </div>
 
                 {/* Center: Ordering Terminal */}
-                <div className="flex-1 relative flex flex-col items-center justify-start lg:justify-center p-2 sm:p-4 lg:p-6 xl:p-8 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-800 via-slate-900 to-slate-950 overflow-y-auto">
+                <div className="flex-1 relative flex flex-col items-center justify-start p-2 sm:p-4 lg:p-6 xl:p-8 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-800 via-slate-900 to-slate-950 overflow-y-auto">
                     <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-fixed"></div>
 
-                    <div className="relative z-10 w-full max-w-4xl bg-slate-800/90 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-2xl border border-slate-600/50 flex flex-col xl:flex-row my-auto">
+                    <div className="relative z-10 w-full max-w-4xl bg-slate-800/90 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-2xl border border-slate-600/50 flex flex-col xl:flex-row m-auto">
 
                         {/* Terminal Left: Suppliers */}
                         <div className="p-3 sm:p-4 lg:p-6 xl:p-8 flex-1">
@@ -371,6 +383,7 @@ const OrderingScreen = ({ state, suppliers, onOrder, turnIndex, seasonInfo, last
                                                 supplier={s}
                                                 playOrderPlus={orderPlus}
                                                 playOrderMinus={orderMinus}
+                                                stepSize={s.id === 3 ? 10 : 5}
                                             />
                                         </div>
                                     );
