@@ -72,25 +72,7 @@ const ResultsScreen = ({ userHistory, rlTrace, onRestart, scenario }) => {
     const loadLeaderboard = async () => {
         setLoadingLeaderboard(true);
         const data = await fetchLeaderboard(currentScenario);
-        // Post-process ranks for ties
-        const rankedData = data.map((entry, i) => {
-            if (i > 0 && Math.abs(entry.score - data[i - 1].score) < 0.01) {
-                return { ...entry, rank: data[i - 1].rank }; // Copy rank from previous if score matches
-            }
-            return { ...entry, rank: i + 1 }; // Default ranking (may need adjustment if we want dense ranking, but this is standard competition ranking 1, 1, 3)
-        });
-
-        // Correct ranks recursively (the map above might miss if 3 people tie, the 3rd one gets rank from 2nd who got from 1st so it works in order)
-        const processedData = [];
-        for (let i = 0; i < data.length; i++) {
-            let rank = i + 1;
-            if (i > 0 && Math.abs(data[i].score - data[i - 1].score) < 0.01) {
-                rank = processedData[i - 1].rank;
-            }
-            processedData.push({ ...data[i], rank });
-        }
-
-        setLeaderboard(processedData);
+        setLeaderboard(data);
         setLoadingLeaderboard(false);
     };
 

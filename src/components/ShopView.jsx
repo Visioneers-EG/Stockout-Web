@@ -176,7 +176,7 @@ const ShopView = ({ turnResult, seasonInfo, onNextTurn, aiComparison, history, r
 
             {/* RIGHT: Daily Report Sidebar */}
             <div className="w-full lg:w-80 xl:w-96 bg-gradient-to-b from-slate-900 to-slate-950 text-white flex flex-col shadow-2xl z-20 h-[45%] sm:h-[40%] lg:h-full border-l border-slate-800 shrink-0">
-                <div className="px-2 py-2 sm:px-4 sm:py-3 lg:p-6 border-b border-slate-800 bg-slate-950 flex justify-between items-center">
+                <div className="order-1 px-2 py-2 sm:px-4 sm:py-3 lg:p-6 border-b border-slate-800 bg-slate-950 flex justify-between items-center">
                     <div className="flex items-center gap-2">
                         <button
                             onClick={onBack}
@@ -200,7 +200,7 @@ const ShopView = ({ turnResult, seasonInfo, onNextTurn, aiComparison, history, r
                     </div>
                 </div>
 
-                <div className="flex-1 p-2 sm:p-4 lg:p-6 flex flex-col gap-2 sm:gap-4 lg:gap-6 overflow-y-auto">
+                <div className="order-3 lg:order-2 flex-1 p-2 sm:p-4 lg:p-6 flex flex-col gap-2 sm:gap-4 lg:gap-6 overflow-y-auto">
                     {/* Season/Event Card (Desktop) */}
                     <div className={`hidden lg:flex items-center gap-4 p-4 rounded-xl border
                         ${activeEvent ?
@@ -276,7 +276,7 @@ const ShopView = ({ turnResult, seasonInfo, onNextTurn, aiComparison, history, r
                 </div>
 
                 {/* Continue Button Area */}
-                <div className="p-2 sm:p-4 lg:p-6 bg-slate-950 border-t border-slate-800 flex-shrink-0">
+                <div className="order-2 lg:order-3 p-2 sm:p-4 lg:p-6 bg-slate-950 border-b lg:border-b-0 lg:border-t border-slate-800 flex-shrink-0">
                     {animationStep === 'summary' ? (
                         <button
                             onClick={() => { click(); onNextTurn(); }}

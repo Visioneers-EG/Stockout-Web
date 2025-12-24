@@ -232,6 +232,18 @@ function App() {
     }
   }, [gameState, mdp]);
 
+  // Prevent refresh during gameplay
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (gameState === 'ORDERING' || gameState === 'SHOP_VIEW') {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [gameState]);
+
   // Handle Order Submission
   const handleOrder = (orders) => {
     const traceTurn = activeTrace.turns[turnIndex];
@@ -297,6 +309,7 @@ function App() {
       <StartScreen
         onSelectScenario={handleSelectScenario}
         onShowLeaderboard={() => setGameState('LEADERBOARD')}
+        onPlayTutorial={() => setGameState('TUTORIAL')}
       />
     );
   }

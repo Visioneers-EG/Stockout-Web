@@ -64,7 +64,19 @@ export async function fetchLeaderboard(scenario = 'all') {
     }
 
     const data = await response.json();
-    return data.entries || [];
+    const entries = data.entries || [];
+
+    // Post-process ranks for ties (Standard Competition Ranking: 1, 1, 3)
+    const processedData = [];
+    for (let i = 0; i < entries.length; i++) {
+      let rank = i + 1;
+      if (i > 0 && Math.abs(entries[i].score - entries[i - 1].score) < 0.01) {
+        rank = processedData[i - 1].rank;
+      }
+      processedData.push({ ...entries[i], rank });
+    }
+
+    return processedData;
   } catch (error) {
     console.error('Failed to fetch leaderboard:', error);
     return [];

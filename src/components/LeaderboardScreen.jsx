@@ -19,22 +19,10 @@ const LeaderboardScreen = ({ onBack }) => {
             fetchLeaderboard('complex')
         ]);
 
-        const processRanks = (data) => {
-            const processedData = [];
-            for (let i = 0; i < data.length; i++) {
-                let rank = i + 1;
-                if (i > 0 && Math.abs(data[i].score - data[i - 1].score) < 0.01) {
-                    rank = processedData[i - 1].rank;
-                }
-                processedData.push({ ...data[i], rank });
-            }
-            return processedData;
-        };
-
         setAllLeaderboards({
-            simple: processRanks(simple),
-            moderate: processRanks(moderate),
-            complex: processRanks(complex)
+            simple,
+            moderate,
+            complex
         });
 
         setLastUpdated(new Date());

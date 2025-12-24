@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Play, TrendingUp, Activity, Trophy, Sparkles, Zap } from 'lucide-react';
+import { Play, TrendingUp, Activity, Trophy, Sparkles, Zap, BookOpen } from 'lucide-react';
 import LeaderboardModal from './LeaderboardModal';
 import useSoundEffects from '../hooks/useSoundEffects';
 
@@ -54,7 +54,7 @@ const ScenarioCard = ({ title, description, difficulty, suppliers, icon: Icon, c
     );
 };
 
-const StartScreen = ({ onSelectScenario }) => {
+const StartScreen = ({ onSelectScenario, onPlayTutorial }) => {
     const [showLeaderboard, setShowLeaderboard] = useState(false);
     const { click } = useSoundEffects();
 
@@ -131,7 +131,7 @@ const StartScreen = ({ onSelectScenario }) => {
                     <Sparkles className="text-yellow-400 w-4 h-4 sm:w-5 sm:h-5" />
                 </p>
 
-                <div className="flex justify-center mb-6 sm:mb-8 lg:mb-10">
+                <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-6 sm:mb-8 lg:mb-10">
                     <button
                         onClick={() => { click(); setShowLeaderboard(true); }}
                         className="flex items-center gap-2 sm:gap-3 px-4 py-2.5 sm:px-6 sm:py-3 lg:px-8 lg:py-4 bg-gradient-to-b from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-white font-black rounded-lg sm:rounded-xl shadow-[0_4px_0_#b45309] sm:shadow-[0_6px_0_#b45309] active:shadow-none active:translate-y-[4px] sm:active:translate-y-[6px] transition-all text-sm sm:text-base lg:text-lg"
@@ -140,6 +140,16 @@ const StartScreen = ({ onSelectScenario }) => {
                         <Trophy size={24} className="hidden sm:block" />
                         <span className="hidden sm:inline">View Leaderboard</span>
                         <span className="sm:hidden">Leaderboard</span>
+                    </button>
+
+                    <button
+                        onClick={() => { click(); onPlayTutorial(); }}
+                        className="flex items-center gap-2 sm:gap-3 px-4 py-2.5 sm:px-6 sm:py-3 lg:px-8 lg:py-4 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-bold rounded-lg sm:rounded-xl border border-slate-700 shadow-lg transition-all text-sm sm:text-base lg:text-lg"
+                    >
+                        <BookOpen size={18} className="sm:hidden" />
+                        <BookOpen size={24} className="hidden sm:block" />
+                        <span className="hidden sm:inline">Replay Tutorial</span>
+                        <span className="sm:hidden">Tutorial</span>
                     </button>
                 </div>
 
