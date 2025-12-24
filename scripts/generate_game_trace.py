@@ -1,33 +1,22 @@
 """
-Generate Game Traces for Multiple Scenarios
+Generate Game Traces for Multiple Scenarios (Simplified - No Seasons)
 
 This script:
-1. Loads the trained RL model (best_model_uwu.zip)
-2. Generates 3 distinct traces (Simple, Moderate, Complex)
-3. Moderate/Complex have more suppliers for added difficulty
-4. Adds seasonal info (season_name, season_factor) to each turn
-5. Saves them to src/assets/trace_{scenario}.json
+1. Uses a heuristic Base-Stock policy AI
+2. Generates 50 traces per difficulty with NO seasonal variation
+3. Keeps only the BEST (lowest cost) trace per difficulty
+4. Seasons are handled as player-only events in the frontend
 """
 
-import sys
 import json
-import math
+import random
 import numpy as np
 from pathlib import Path
 
-# Add parent repo to path for imports
-REPO_PATH = Path(__file__).parent.parent.parent / "Multi-Supplier-Perishable-Inventory"
-sys.path.insert(0, str(REPO_PATH))
-sys.path.insert(0, str(REPO_PATH / "colab_training")) 
-
-from stable_baselines3 import PPO
-from gym_env import create_gym_env, PerishableInventoryGymWrapper
-from perishable_inventory_mdp.demand import PoissonDemand, NegativeBinomialDemand
-
 # Global Config
 SHELF_LIFE = 5
-EPISODE_LENGTH = 20
-INITIAL_INVENTORY = 30  # Start with 30 units (same as player)
+INITIAL_INVENTORY = 30
+TRACES_TO_GENERATE = 50  # Generate many, keep best
 
 # Supplier configurations per scenario
 SUPPLIER_CONFIGS = {
@@ -37,190 +26,265 @@ SUPPLIER_CONFIGS = {
     ],
     "moderate": [
         {"id": 0, "name": "Express", "lead_time": 1, "cost": 2.5},
-        {"id": 1, "name": "Standard", "lead_time": 2, "cost": 1.5},
-        {"id": 2, "name": "Economy", "lead_time": 4, "cost": 0.8}
+        {"id": 2, "name": "Standard", "lead_time": 2, "cost": 1.5},
+        {"id": 1, "name": "Economy", "lead_time": 4, "cost": 0.8}
     ],
     "complex": [
         {"id": 0, "name": "Premium", "lead_time": 1, "cost": 3.0},
-        {"id": 1, "name": "Express", "lead_time": 2, "cost": 2.0},
-        {"id": 2, "name": "Standard", "lead_time": 3, "cost": 1.2},
+        {"id": 2, "name": "Express", "lead_time": 2, "cost": 2.0},
+        {"id": 1, "name": "Standard", "lead_time": 3, "cost": 1.2},
         {"id": 3, "name": "Budget", "lead_time": 5, "cost": 0.6}
     ]
 }
 
-# Scenario definitions with seasonal patterns
+# Scenario definitions (NO seasonal patterns - steady demand for AI)
 SCENARIO_CONFIG = {
     "simple": {
         "base_demand": 10.0,
-        "demand_type": "poisson",
-        "seasonal_pattern": None,
+        "demand_cv": 0.15,  # Low variance for simple
+        "episode_length": 15,
         "description": "Steady demand, 2 suppliers"
     },
     "moderate": {
         "base_demand": 12.0,
-        "demand_type": "negbin",
-        "seasonal_pattern": None,
-        "description": "High variance, 3 suppliers"
+        "demand_cv": 0.25,  # Moderate variance
+        "episode_length": 20,
+        "description": "Variable demand, 3 suppliers"
     },
     "complex": {
         "base_demand": 15.0,
-        "demand_type": "poisson",
-        "seasonal_pattern": "sinusoidal",
-        "description": "Seasonal waves, 4 suppliers"
+        "demand_cv": 0.3,  # Higher variance
+        "episode_length": 20,
+        "description": "High variance, 4 suppliers"
     }
 }
 
 
-def get_season_info(step, demand, base_demand, scenario):
-    """Determine season based on step and demand relative to baseline."""
-    config = SCENARIO_CONFIG[scenario]
-    pattern = config.get("seasonal_pattern")
-    
-    if pattern == "sinusoidal":
-        # Full cycle over 20 steps: Winter at start/end, Summer in middle
-        phase = step / EPISODE_LENGTH * 2 * math.pi
-        season_factor = 1.0 + 0.5 * math.sin(phase)
-        
-        if step < 5 or step >= 15:
-            season_name = "Winter"
-        elif step < 10:
-            season_name = "Spring"
-        else:
-            season_name = "Summer"
+def generate_demand(base_demand, cv, rng):
+    """Generate demand with noise (no seasonal adjustment)."""
+    std_dev = base_demand * cv
+    if std_dev > 0:
+        shape = (base_demand / std_dev) ** 2
+        scale = (std_dev ** 2) / base_demand
+        demand = rng.gamma(shape, scale)
     else:
-        season_factor = 1.0
-        if demand > base_demand * 1.3:
-            season_name = "High Demand"
-        elif demand < base_demand * 0.7:
-            season_name = "Low Demand"
-        else:
-            season_name = "Normal"
+        demand = base_demand
+    return max(1, round(demand))
+
+
+class InventorySimulator:
+    """Simulates inventory dynamics for the heuristic AI."""
     
-    return season_name, round(season_factor, 2)
+    def __init__(self, suppliers, shelf_life=5):
+        self.suppliers = sorted(suppliers, key=lambda s: s["cost"])
+        self.shelf_life = shelf_life
+        self.inventory = [0] * shelf_life
+        self.inventory[-1] = INITIAL_INVENTORY
+        self.pipelines = {s["id"]: [0] * s["lead_time"] for s in suppliers}
+        self.backorders = 0
+        
+        self.holding_cost = 0.5
+        self.shortage_cost = 10.0
+        self.spoilage_cost = 5.0
+    
+    def get_total_inventory(self):
+        return sum(self.inventory)
+    
+    def get_pipeline_total(self):
+        return sum(sum(p) for p in self.pipelines.values())
+    
+    def get_inventory_position(self):
+        return self.get_total_inventory() + self.get_pipeline_total() - self.backorders
+    
+    def step(self, orders, demand):
+        costs = {"purchase": 0, "holding": 0, "shortage": 0, "spoilage": 0}
+        
+        # Receive arrivals
+        arrivals = 0
+        for supplier in self.suppliers:
+            sid = supplier["id"]
+            if self.pipelines[sid]:
+                arrivals += self.pipelines[sid][0]
+                self.pipelines[sid] = self.pipelines[sid][1:] + [0]
+        self.inventory[-1] += arrivals
+        
+        # Serve demand (FIFO)
+        total_demand = demand + self.backorders
+        sales = 0
+        for i in range(len(self.inventory)):
+            available = self.inventory[i]
+            sold = min(available, total_demand - sales)
+            self.inventory[i] -= sold
+            sales += sold
+            if sales >= total_demand:
+                break
+        
+        new_backorders = max(0, total_demand - sales)
+        costs["holding"] = sum(self.inventory) * self.holding_cost
+        costs["shortage"] = new_backorders * self.shortage_cost
+        
+        # Age inventory
+        spoiled = self.inventory[0]
+        self.inventory = self.inventory[1:] + [0]
+        costs["spoilage"] = spoiled * self.spoilage_cost
+        
+        # Place orders
+        for supplier in self.suppliers:
+            sid = supplier["id"]
+            qty = orders.get(sid, 0)
+            if qty > 0:
+                self.pipelines[sid][-1] += qty
+                costs["purchase"] += qty * supplier["cost"]
+        
+        self.backorders = new_backorders
+        total_cost = sum(costs.values())
+        
+        return {
+            "costs": costs,
+            "total_cost": total_cost,
+            "demand": demand,
+            "sales": sales,
+            "spoilage": spoiled,
+            "inventory": self.get_total_inventory(),
+            "arrivals": arrivals
+        }
 
 
-def create_scenario_env(scenario, seed=42):
-    """Create a gym environment tailored for a specific scenario."""
-    np.random.seed(seed)
+class BaseStockPolicy:
+    """Heuristic AI using Base-Stock policy."""
+    
+    def __init__(self, suppliers, base_demand, safety_factor=1.5):
+        self.suppliers = sorted(suppliers, key=lambda s: s["cost"])
+        self.base_demand = base_demand
+        self.max_lead_time = max(s["lead_time"] for s in suppliers)
+        self.target_level = base_demand * (self.max_lead_time + safety_factor)
+    
+    def get_orders(self, inventory_position):
+        """Determine orders based on current inventory position."""
+        gap = max(0, self.target_level - inventory_position)
+        
+        if gap <= 0:
+            return {s["id"]: 0 for s in self.suppliers}
+        
+        orders = {}
+        remaining_gap = gap
+        
+        for supplier in self.suppliers:
+            if remaining_gap <= 0:
+                orders[supplier["id"]] = 0
+                continue
+            
+            if supplier["lead_time"] <= 2:
+                order_qty = min(remaining_gap * 0.3, self.base_demand * 0.5)
+            else:
+                order_qty = min(remaining_gap * 0.5, self.base_demand * 1.5)
+            
+            order_qty = round(order_qty / 5) * 5
+            order_qty = max(0, min(order_qty, remaining_gap))
+            
+            orders[supplier["id"]] = order_qty
+            remaining_gap -= order_qty
+        
+        return orders
+
+
+def generate_trace(scenario, seed):
+    """Generate a single trace for a scenario with given seed."""
+    rng = np.random.default_rng(seed)
+    random.seed(seed)
     
     config = SCENARIO_CONFIG[scenario]
     suppliers = SUPPLIER_CONFIGS[scenario]
-    base_demand = config["base_demand"]
-    demand_type = config["demand_type"]
+    episode_length = config["episode_length"]
     
-    if demand_type == "poisson":
-        demand_process = PoissonDemand(base_rate=base_demand)
-    elif demand_type == "negbin":
-        # Higher variance for moderate
-        demand_process = NegativeBinomialDemand(n_successes=4, prob_success=0.25)
-    else:
-        demand_process = PoissonDemand(base_rate=base_demand)
+    sim = InventorySimulator(suppliers, SHELF_LIFE)
+    policy = BaseStockPolicy(suppliers, config["base_demand"], safety_factor=1.5)
     
-    # Get lead times and costs from supplier config
-    fast_lt = suppliers[0]["lead_time"]
-    slow_lt = suppliers[-1]["lead_time"]
-    fast_cost = suppliers[0]["cost"]
-    slow_cost = suppliers[-1]["cost"]
+    trace = {
+        "turns": [],
+        "metadata": {
+            "scenario": scenario,
+            "episode_length": episode_length,
+            "base_demand": config["base_demand"],
+            "description": config["description"],
+            "initial_inventory": INITIAL_INVENTORY,
+            "suppliers": suppliers,
+            "seed": seed
+        }
+    }
     
-    env = create_gym_env(
-        shelf_life=SHELF_LIFE,
-        mean_demand=base_demand,
-        fast_lead_time=fast_lt,
-        slow_lead_time=slow_lt,
-        fast_cost=fast_cost,
-        slow_cost=slow_cost,
-        demand_process=demand_process,
-        enable_crisis=False
-    )
-    return env, suppliers
+    total_cost = 0
+    
+    for step in range(episode_length):
+        # Generate steady demand (no seasons)
+        demand = generate_demand(config["base_demand"], config["demand_cv"], rng)
+        
+        # AI determines orders
+        inventory_position = sim.get_inventory_position()
+        orders = policy.get_orders(inventory_position)
+        
+        # Execute step
+        result = sim.step(orders, demand)
+        total_cost += result["total_cost"]
+        
+        turn_data = {
+            "step": step,
+            "demand": demand,
+            "season_name": "Normal",  # No seasons for AI
+            "season_factor": 1.0,
+            "rl_action": {str(k): float(v) for k, v in orders.items()},
+            "environment_outcome": {
+                "cost": round(result["total_cost"], 2),
+                "sales": result["sales"],
+                "spoilage": result["spoilage"],
+                "inventory": result["inventory"],
+                "demand": demand
+            }
+        }
+        trace["turns"].append(turn_data)
+    
+    trace["metadata"]["total_ai_cost"] = round(total_cost, 2)
+    return trace
 
 
-def set_initial_inventory(env, inventory_qty):
-    """Set initial inventory in the environment's internal state."""
-    if hasattr(env, 'current_state') and env.current_state is not None:
-        env.current_state.inventory[SHELF_LIFE - 1] = inventory_qty
-    elif hasattr(env, 'mdp') and hasattr(env.mdp, 'current_state'):
-        env.mdp.current_state.inventory[SHELF_LIFE - 1] = inventory_qty
-
-
-def generate_traces(model_path, output_dir):
-    print(f"Loading model from {model_path}...")
-    model = PPO.load(model_path)
+def generate_best_traces(output_dir):
+    """Generate multiple traces per scenario, keep only the best."""
+    output_path = Path(output_dir)
+    
+    # Clean up old traces directory if exists
+    traces_dir = output_path / "traces"
+    if traces_dir.exists():
+        import shutil
+        shutil.rmtree(traces_dir)
     
     scenarios = ["simple", "moderate", "complex"]
     
     for scenario in scenarios:
-        config = SCENARIO_CONFIG[scenario]
-        suppliers = SUPPLIER_CONFIGS[scenario]
+        print(f"\nGenerating {TRACES_TO_GENERATE} traces for {scenario}...")
         
-        print(f"Generating trace for: {scenario} ({config['description']})...")
+        best_trace = None
+        best_cost = float('inf')
         
-        env, _ = create_scenario_env(scenario)
-        obs, info = env.reset(seed=42)
-        
-        # Set initial inventory to 30 (same as player starts with)
-        set_initial_inventory(env, INITIAL_INVENTORY)
-        if hasattr(env, '_get_observation') and hasattr(env, 'current_state'):
-            obs = env._get_observation(env.current_state)
-        
-        trace = {
-            "turns": [], 
-            "metadata": {
-                "scenario": scenario, 
-                "episode_length": EPISODE_LENGTH,
-                "base_demand": config["base_demand"],
-                "description": config["description"],
-                "initial_inventory": INITIAL_INVENTORY,
-                "suppliers": suppliers
-            }
-        }
-        
-        total_cost = 0
-        
-        for step in range(EPISODE_LENGTH):
-            action, _ = model.predict(obs, deterministic=True)
-            next_obs, reward, terminated, truncated, info = env.step(action)
+        for i in range(TRACES_TO_GENERATE):
+            seed = hash(f"{scenario}_{i}_v2") % (2**32)
+            trace = generate_trace(scenario, seed)
+            cost = trace["metadata"]["total_ai_cost"]
             
-            cost = float(info.get("total_cost", 0))
-            demand = float(info.get("demand", 0))
-            total_cost += cost
-            
-            season_name, season_factor = get_season_info(
-                step, demand, config["base_demand"], scenario
-            )
-            
-            # Build RL action dict from decoded orders (not raw action indices)
-            decoded_orders = info.get("orders", {})
-            rl_action = {str(k): float(v) for k, v in decoded_orders.items()}
-            
-            turn_data = {
-                "step": step,
-                "demand": demand,
-                "season_name": season_name,
-                "season_factor": season_factor,
-                "rl_action": rl_action,
-                "environment_outcome": {
-                    "cost": cost,
-                    "sales": float(info.get("sales", 0)),
-                    "spoilage": float(info.get("spoilage", 0)),
-                    "inventory": float(info.get("inventory", 0)),
-                    "demand": demand
-                }
-            }
-            trace["turns"].append(turn_data)
-            obs = next_obs
-            
-            if terminated or truncated:
-                break
-                
-        print(f"  > Total Cost: {total_cost:.2f}")
+            if cost < best_cost:
+                best_cost = cost
+                best_trace = trace
+                print(f"  > New best: ${cost:.2f} (seed {i})")
         
-        out_path = Path(output_dir) / f"trace_{scenario}.json"
-        with open(out_path, "w") as f:
-            json.dump(trace, f, indent=2)
+        # Save only the best trace
+        out_file = output_path / f"trace_{scenario}.json"
+        with open(out_file, "w") as f:
+            json.dump(best_trace, f, indent=2)
+        
+        print(f"  > Best trace saved: ${best_cost:.2f}")
+    
+    print(f"\nBest traces saved to {output_path}")
 
 
 if __name__ == "__main__":
-    MODEL_PATH = str(REPO_PATH / "best_model_uwu.zip")
     OUTPUT_DIR = str(Path(__file__).parent.parent / "src" / "assets")
-    generate_traces(MODEL_PATH, OUTPUT_DIR)
+    generate_best_traces(OUTPUT_DIR)

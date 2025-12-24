@@ -18,7 +18,7 @@ const BUBBLE_POSITION = {
 // ============================================================
 
 
-const ShopView = ({ turnResult, seasonInfo, onNextTurn, aiComparison, history, rlTrace, onBack }) => {
+const ShopView = ({ turnResult, seasonInfo, onNextTurn, aiComparison, history, rlTrace, onBack, activeEvent = null }) => {
     const [animationStep, setAnimationStep] = useState('idle');
     const { arrival, demand, sale, miss, spoil, click } = useSoundEffects();
     const soundsPlayedRef = useRef({ summary: false });
@@ -201,15 +201,39 @@ const ShopView = ({ turnResult, seasonInfo, onNextTurn, aiComparison, history, r
                 </div>
 
                 <div className="flex-1 p-2 sm:p-4 lg:p-6 flex flex-col gap-2 sm:gap-4 lg:gap-6 overflow-y-auto">
-                    {/* Season Card (Desktop) */}
-                    <div className="hidden lg:flex items-center gap-4 bg-gradient-to-r from-slate-800 to-slate-800/50 p-4 rounded-xl border border-slate-700">
-                        <div className={`p-3 rounded-lg ${seasonInfo.factor > 1.0 ? 'bg-cyan-900/30' : 'bg-yellow-900/30'}`}>
-                            {seasonInfo.factor > 1.0 ? <Snowflake className="text-cyan-300 w-6 h-6" /> : <Sun className="text-yellow-400 w-6 h-6" />}
+                    {/* Season/Event Card (Desktop) */}
+                    <div className={`hidden lg:flex items-center gap-4 p-4 rounded-xl border
+                        ${activeEvent ?
+                            (activeEvent.type === 'extreme_surge' ? 'bg-gradient-to-r from-red-900/50 to-orange-900/30 border-red-500' :
+                                activeEvent.type === 'surge' ? 'bg-gradient-to-r from-amber-900/50 to-orange-900/30 border-amber-500' :
+                                    'bg-gradient-to-r from-blue-900/50 to-indigo-900/30 border-blue-500') :
+                            'bg-gradient-to-r from-slate-800 to-slate-800/50 border-slate-700'}`}>
+                        <div className={`p-3 rounded-lg ${activeEvent ?
+                            (activeEvent.type === 'extreme_surge' ? 'bg-red-900/50' :
+                                activeEvent.type === 'surge' ? 'bg-amber-900/50' : 'bg-blue-900/50') :
+                            'bg-slate-700/50'}`}>
+                            {activeEvent ? (
+                                <span className="text-2xl">
+                                    {activeEvent.type === 'extreme_surge' ? '🔥' : activeEvent.type === 'surge' ? '📈' : '📉'}
+                                </span>
+                            ) : (
+                                <Sun className="text-slate-400 w-6 h-6" />
+                            )}
                         </div>
                         <div>
-                            <div className="font-bold text-lg uppercase tracking-wider">{seasonInfo.name}</div>
-                            <div className={`text-xs ${seasonInfo.factor > 1.0 ? 'text-cyan-200' : 'text-yellow-200/70'}`}>
-                                {seasonInfo.factor > 1.0 ? 'High Demand Expected' : 'Standard Demand'}
+                            <div className={`font-bold text-lg uppercase tracking-wider ${activeEvent ?
+                                (activeEvent.type === 'extreme_surge' ? 'text-red-300' :
+                                    activeEvent.type === 'surge' ? 'text-amber-300' : 'text-blue-300') :
+                                'text-slate-300'}`}>
+                                {seasonInfo.name}
+                            </div>
+                            <div className={`text-xs ${activeEvent ?
+                                (activeEvent.type === 'extreme_surge' ? 'text-red-200/70' :
+                                    activeEvent.type === 'surge' ? 'text-amber-200/70' : 'text-blue-200/70') :
+                                'text-slate-400'}`}>
+                                {activeEvent ?
+                                    `${activeEvent.modifier}x Demand • ${Math.round(activeEvent.endChance * 100)}% chance to end` :
+                                    'Standard Demand'}
                             </div>
                         </div>
                     </div>
