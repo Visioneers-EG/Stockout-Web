@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Trophy, ArrowLeft, RefreshCw } from 'lucide-react';
+import { Trophy, RefreshCw } from 'lucide-react';
 import { fetchLeaderboard } from '../services/leaderboard';
+import qrCode from '../assets/qrcode.png';
 
 const LeaderboardScreen = ({ onBack }) => {
     const [allLeaderboards, setAllLeaderboards] = useState({
@@ -97,31 +98,31 @@ const LeaderboardScreen = ({ onBack }) => {
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 pointer-events-none"></div>
             <div className="absolute top-0 inset-x-0 h-64 bg-gradient-to-b from-blue-900/20 to-transparent pointer-events-none"></div>
 
+            {/* Floating QR Code */}
+            <div className="fixed top-4 right-4 sm:top-6 sm:right-6 z-50">
+                <img src={qrCode} alt="Play Stockout" className="w-32 h-32 sm:w-40 sm:h-40 object-contain rounded-xl shadow-2xl" />
+            </div>
+
             {/* Header */}
             <div className="relative z-10 bg-slate-900/90 border-b border-slate-800 p-4 sm:p-6 shadow-2xl flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-4">
-                    <button
-                        onClick={onBack}
-                        className="p-2 hover:bg-slate-800 rounded-full transition-colors text-slate-400 hover:text-white group"
-                        title="Back to Menu"
-                    >
-                        <ArrowLeft size={24} className="group-hover:-translate-x-1 transition-transform" />
-                    </button>
                     <div>
                         <h1 className="text-2xl sm:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-400 flex items-center gap-3">
                             <Trophy className="text-yellow-400" />
                             HALL OF FAME
                         </h1>
-                        <p className="text-slate-500 text-xs sm:text-sm mt-1">Live updates every 5s • Last updated: {lastUpdated.toLocaleTimeString()}</p>
+                        <p className="text-slate-500 text-xs sm:text-sm mt-1">Live updates every 5s • Last updated: {lastUpdated.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</p>
                     </div>
                 </div>
 
-                {loading && (
-                    <div className="flex items-center gap-2 text-slate-400 text-sm animate-pulse">
-                        <RefreshCw size={16} className="animate-spin" />
-                        <span className="hidden sm:inline">Updating...</span>
-                    </div>
-                )}
+                <div className="flex items-center gap-4">
+                    {loading && (
+                        <div className="flex items-center gap-2 text-slate-400 text-sm animate-pulse">
+                            <RefreshCw size={16} className="animate-spin" />
+                            <span className="hidden sm:inline">Updating...</span>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Leaderboards Grid */}
