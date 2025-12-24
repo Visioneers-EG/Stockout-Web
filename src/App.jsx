@@ -104,8 +104,9 @@ function App() {
 
   // Initialize Game
   useEffect(() => {
-    // Check for hidden leaderboard route
-    if (window.location.pathname === '/leaderboard') {
+    // Check for hidden leaderboard route (handle potential trailing slash)
+    const path = window.location.pathname.replace(/\/$/, '');
+    if (path === '/leaderboard') {
       setGameState('LEADERBOARD');
       return;
     }
