@@ -14,6 +14,7 @@ export function MusicProvider({ children }) {
         return saved === 'true';
     });
     const [isPlaying, setIsPlaying] = useState(false);
+    const [hasInteracted, setHasInteracted] = useState(false);
     const audioRef = useRef(null);
 
     // Initialize audio element
@@ -23,26 +24,49 @@ export function MusicProvider({ children }) {
         audio.volume = 0.3; // Start at 30% volume
         audioRef.current = audio;
 
-        // Handle play/pause based on mute state
-        const handleCanPlay = () => {
-            if (!isMuted) {
-                audio.play().then(() => {
-                    setIsPlaying(true);
-                }).catch(err => {
-                    // Autoplay blocked, will need user interaction
-                    console.log('Autoplay blocked, waiting for user interaction');
-                });
-            }
-        };
-
-        audio.addEventListener('canplaythrough', handleCanPlay);
-
         return () => {
-            audio.removeEventListener('canplaythrough', handleCanPlay);
             audio.pause();
             audio.src = '';
         };
     }, []);
+
+    // Try to start playing when user has interacted and not muted
+    const tryPlay = useCallback(() => {
+        if (audioRef.current && !isMuted && !isPlaying) {
+            audioRef.current.play().then(() => {
+                setIsPlaying(true);
+            }).catch(err => {
+                console.log('Playback failed:', err);
+            });
+        }
+    }, [isMuted, isPlaying]);
+
+    // Listen for first user interaction to start music
+    useEffect(() => {
+        if (hasInteracted && !isMuted) {
+            tryPlay();
+        }
+    }, [hasInteracted, isMuted, tryPlay]);
+
+    // Set up interaction listeners
+    useEffect(() => {
+        const handleInteraction = () => {
+            if (!hasInteracted) {
+                setHasInteracted(true);
+            }
+        };
+
+        // Listen for various user interactions
+        document.addEventListener('click', handleInteraction);
+        document.addEventListener('touchstart', handleInteraction);
+        document.addEventListener('keydown', handleInteraction);
+
+        return () => {
+            document.removeEventListener('click', handleInteraction);
+            document.removeEventListener('touchstart', handleInteraction);
+            document.removeEventListener('keydown', handleInteraction);
+        };
+    }, [hasInteracted]);
 
     // Handle mute state changes
     useEffect(() => {
@@ -50,7 +74,7 @@ export function MusicProvider({ children }) {
             if (isMuted) {
                 audioRef.current.pause();
                 setIsPlaying(false);
-            } else {
+            } else if (hasInteracted) {
                 audioRef.current.play().then(() => {
                     setIsPlaying(true);
                 }).catch(err => {
@@ -59,11 +83,15 @@ export function MusicProvider({ children }) {
             }
         }
         localStorage.setItem('stockout_music_muted', isMuted.toString());
-    }, [isMuted]);
+    }, [isMuted, hasInteracted]);
 
     const toggleMute = useCallback(() => {
         setIsMuted(prev => !prev);
-    }, []);
+        // Also mark as interacted when user clicks the button
+        if (!hasInteracted) {
+            setHasInteracted(true);
+        }
+    }, [hasInteracted]);
 
     return (
         <MusicContext.Provider value={{ isMuted, isPlaying, toggleMute }}>

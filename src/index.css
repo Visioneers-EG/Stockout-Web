@@ -29,9 +29,26 @@ body {
 
 /* Screen shake for impactful moments */
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
-  20%, 40%, 60%, 80% { transform: translateX(4px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-4px);
+  }
+
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(4px);
+  }
 }
 
 .animate-shake {
@@ -40,9 +57,17 @@ body {
 
 /* Button press effect - satisfying squish */
 @keyframes buttonPress {
-  0% { transform: scale(1); }
-  50% { transform: scale(0.92); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(0.92);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .animate-button-press {
@@ -51,11 +76,14 @@ body {
 
 /* Glow pulse for interactive elements */
 @keyframes glowPulse {
-  0%, 100% { 
-    box-shadow: 0 0 5px currentColor, 0 0 10px rgba(16, 185, 129, 0.3); 
+
+  0%,
+  100% {
+    box-shadow: 0 0 5px currentColor, 0 0 10px rgba(16, 185, 129, 0.3);
   }
-  50% { 
-    box-shadow: 0 0 15px currentColor, 0 0 30px rgba(16, 185, 129, 0.5), 0 0 45px rgba(16, 185, 129, 0.2); 
+
+  50% {
+    box-shadow: 0 0 15px currentColor, 0 0 30px rgba(16, 185, 129, 0.5), 0 0 45px rgba(16, 185, 129, 0.2);
   }
 }
 
@@ -65,10 +93,21 @@ body {
 
 /* Number pop for value changes */
 @keyframes numberPop {
-  0% { transform: scale(1); }
-  25% { transform: scale(1.25); }
-  50% { transform: scale(0.95); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  25% {
+    transform: scale(1.25);
+  }
+
+  50% {
+    transform: scale(0.95);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .animate-number-pop {
@@ -77,9 +116,17 @@ body {
 
 /* Success flash */
 @keyframes successFlash {
-  0% { background-color: inherit; }
-  25% { background-color: rgba(16, 185, 129, 0.3); }
-  100% { background-color: inherit; }
+  0% {
+    background-color: inherit;
+  }
+
+  25% {
+    background-color: rgba(16, 185, 129, 0.3);
+  }
+
+  100% {
+    background-color: inherit;
+  }
 }
 
 .animate-success-flash {
@@ -92,6 +139,7 @@ body {
     transform: scale(0);
     opacity: 0.5;
   }
+
   100% {
     transform: scale(4);
     opacity: 0;
@@ -100,10 +148,23 @@ body {
 
 /* Bounce in animation */
 @keyframes bounceIn {
-  0% { transform: scale(0); opacity: 0; }
-  50% { transform: scale(1.1); }
-  70% { transform: scale(0.95); }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  70% {
+    transform: scale(0.95);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .animate-bounce-in {
@@ -112,8 +173,15 @@ body {
 
 /* Float animation for avatars */
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-3px);
+  }
 }
 
 .animate-float {
@@ -122,11 +190,27 @@ body {
 
 /* Heartbeat for important elements */
 @keyframes heartbeat {
-  0%, 100% { transform: scale(1); }
-  14% { transform: scale(1.1); }
-  28% { transform: scale(1); }
-  42% { transform: scale(1.1); }
-  56% { transform: scale(1); }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  14% {
+    transform: scale(1.1);
+  }
+
+  28% {
+    transform: scale(1);
+  }
+
+  42% {
+    transform: scale(1.1);
+  }
+
+  56% {
+    transform: scale(1);
+  }
 }
 
 .animate-heartbeat {
@@ -135,8 +219,15 @@ body {
 
 /* Slide in from right */
 @keyframes slideInRight {
-  0% { transform: translateX(100%); opacity: 0; }
-  100% { transform: translateX(0); opacity: 1; }
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 .animate-slide-in-right {
@@ -145,8 +236,15 @@ body {
 
 /* Fade in up */
 @keyframes fadeInUp {
-  0% { transform: translateY(20px); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .animate-fade-in-up {
@@ -158,9 +256,7 @@ body {
    ============================================ */
 
 .stepper-btn {
-  @apply flex items-center justify-center font-black text-2xl
-         transition-all duration-75 select-none cursor-pointer
-         active:scale-90;
+  @apply flex items-center justify-center font-black text-2xl transition-all duration-75 select-none cursor-pointer active:scale-90;
   min-width: 48px;
   min-height: 48px;
 }
@@ -186,10 +282,102 @@ body {
 
 /* Supplier avatar container */
 .supplier-avatar {
-  @apply relative flex items-center justify-center rounded-full
-         transition-transform duration-200;
+  @apply relative flex items-center justify-center rounded-full transition-transform duration-200;
 }
 
 .supplier-avatar:hover {
   transform: scale(1.1);
+}
+
+/* ============================================
+   LOADING SCREEN ANIMATIONS
+   ============================================ */
+
+/* Floating pill animation - gentle rise with subtle sway */
+@keyframes floatPill {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+
+  5% {
+    opacity: 0.25;
+  }
+
+  25% {
+    transform: translateY(-25vh) translateX(10px) rotate(5deg);
+  }
+
+  50% {
+    transform: translateY(-50vh) translateX(-5px) rotate(-3deg);
+  }
+
+  75% {
+    transform: translateY(-75vh) translateX(8px) rotate(4deg);
+  }
+
+  95% {
+    opacity: 0.25;
+  }
+
+  100% {
+    transform: translateY(-100vh) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+}
+
+.animate-float-pill {
+  animation: floatPill linear infinite;
+  will-change: transform, opacity;
+}
+
+/* Progress ring glow */
+@keyframes progressGlow {
+
+  0%,
+  100% {
+    filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.7)) drop-shadow(0 0 40px rgba(59, 130, 246, 0.5));
+  }
+}
+
+.animate-progress-glow {
+  animation: progressGlow 2s ease-in-out infinite;
+}
+
+/* Logo pulse effect */
+@keyframes loadingPulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.3));
+  }
+
+  50% {
+    transform: scale(1.02);
+    filter: drop-shadow(0 0 40px rgba(16, 185, 129, 0.5)) drop-shadow(0 0 60px rgba(59, 130, 246, 0.3));
+  }
+}
+
+.animate-loading-pulse {
+  animation: loadingPulse 2s ease-in-out infinite;
+}
+
+/* Fade out animation */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.5s ease-out forwards;
 }
