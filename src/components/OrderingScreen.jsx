@@ -1,11 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { Package, Truck, Calendar, ShoppingCart, AlertTriangle, TrendingUp, Zap, Clock, DollarSign, ArrowLeft } from 'lucide-react';
 import useSoundEffects from '../hooks/useSoundEffects';
+import { RocketIcon, TurtleIcon, CrownIcon, BoxesIcon } from './SupplierIcons';
 
 // Supplier identity configuration
 const SUPPLIER_IDENTITY = {
     0: {
-        emoji: '🚀',
+        Icon: RocketIcon,
         name: 'Express Logistics',
         tagline: 'Lightning Fast Delivery',
         colorTheme: 'cyan',
@@ -13,10 +14,11 @@ const SUPPLIER_IDENTITY = {
         borderColor: 'border-cyan-500',
         textColor: 'text-cyan-400',
         bgColor: 'bg-cyan-900/50',
-        truckColor: 'text-cyan-400'
+        truckColor: 'text-cyan-400',
+        iconColor: 'text-cyan-300'
     },
     1: {
-        emoji: '🐢',
+        Icon: TurtleIcon,
         name: 'Budget Freight',
         tagline: 'Slow but Steady Savings',
         colorTheme: 'orange',
@@ -24,10 +26,11 @@ const SUPPLIER_IDENTITY = {
         borderColor: 'border-orange-500',
         textColor: 'text-orange-400',
         bgColor: 'bg-orange-900/50',
-        truckColor: 'text-orange-400'
+        truckColor: 'text-orange-400',
+        iconColor: 'text-orange-300'
     },
     2: {
-        emoji: '👑',
+        Icon: CrownIcon,
         name: 'Premium Supply Co',
         tagline: 'Quality You Can Trust',
         colorTheme: 'yellow',
@@ -35,10 +38,11 @@ const SUPPLIER_IDENTITY = {
         borderColor: 'border-yellow-500',
         textColor: 'text-yellow-400',
         bgColor: 'bg-yellow-900/50',
-        truckColor: 'text-yellow-400'
+        truckColor: 'text-yellow-400',
+        iconColor: 'text-yellow-300'
     },
     3: {
-        emoji: '📦',
+        Icon: BoxesIcon,
         name: 'Mega Wholesale',
         tagline: 'Bulk Orders, Big Savings',
         colorTheme: 'purple',
@@ -46,7 +50,8 @@ const SUPPLIER_IDENTITY = {
         borderColor: 'border-purple-500',
         textColor: 'text-purple-400',
         bgColor: 'bg-purple-900/50',
-        truckColor: 'text-purple-400'
+        truckColor: 'text-purple-400',
+        iconColor: 'text-purple-300'
     }
 };
 
@@ -128,10 +133,18 @@ const OrderStepper = ({ value, onChange, supplier, playOrderPlus, playOrderMinus
 // Supplier Avatar Component
 const SupplierAvatar = ({ identity, size = 'md' }) => {
     const sizeClasses = {
-        sm: 'w-8 h-8 text-base sm:w-10 sm:h-10 sm:text-lg',
-        md: 'w-10 h-10 text-lg sm:w-12 sm:h-12 sm:text-xl lg:w-14 lg:h-14 lg:text-2xl',
-        lg: 'w-14 h-14 text-2xl sm:w-16 sm:h-16 sm:text-3xl lg:w-20 lg:h-20 lg:text-4xl'
+        sm: 'w-8 h-8 sm:w-10 sm:h-10',
+        md: 'w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14',
+        lg: 'w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20'
     };
+
+    const iconSizes = {
+        sm: 16,
+        md: 24,
+        lg: 32
+    };
+
+    const Icon = identity.Icon;
 
     return (
         <div
@@ -144,7 +157,7 @@ const SupplierAvatar = ({ identity, size = 'md' }) => {
                 shadow-lg
             `}
         >
-            <span>{identity.emoji}</span>
+            <Icon size={iconSizes[size]} className={identity.iconColor} />
         </div>
     );
 };
@@ -246,23 +259,26 @@ const OrderingScreen = ({ state, suppliers, onOrder, turnIndex, seasonInfo, last
 
                         if (allTrucks.length === 0) return <div className="text-slate-600 font-bold text-sm sm:text-lg lg:text-xl italic mx-auto">NO INCOMING ORDERS</div>;
 
-                        return allTrucks.map((truck, i) => (
-                            <div key={i} className="relative group shrink-0 transform transition-all hover:scale-110 cursor-pointer min-w-[60px] sm:min-w-[70px] lg:min-w-[80px]">
-                                <div className="absolute -top-5 sm:-top-6 lg:-top-7 left-1/2 -translate-x-1/2 text-[8px] sm:text-[10px] lg:text-xs font-bold text-slate-300 whitespace-nowrap bg-slate-800 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded border border-slate-600 z-20 shadow-lg">
-                                    {truck.daysOut === 1 ? 'Tomorrow' : `In ${truck.daysOut} Days`}
-                                </div>
-
-                                <div className={`p-1.5 sm:p-2 rounded-md sm:rounded-lg border-2 ${truck.identity.bgColor} ${truck.identity.borderColor} flex flex-col items-center gap-0.5 sm:gap-1 shadow-[0_0_15px_rgba(0,0,0,0.5)] bg-slate-800`}>
-                                    <div className="flex items-center gap-0.5 sm:gap-1">
-                                        <span className="text-sm sm:text-base lg:text-lg">{truck.identity.emoji}</span>
-                                        <Truck className={`w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 ${truck.identity.truckColor}`} />
+                        return allTrucks.map((truck, i) => {
+                            const TruckIcon = truck.identity.Icon;
+                            return (
+                                <div key={i} className="relative group shrink-0 transform transition-all hover:scale-110 cursor-pointer min-w-[60px] sm:min-w-[70px] lg:min-w-[80px]">
+                                    <div className="absolute -top-5 sm:-top-6 lg:-top-7 left-1/2 -translate-x-1/2 text-[8px] sm:text-[10px] lg:text-xs font-bold text-slate-300 whitespace-nowrap bg-slate-800 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded border border-slate-600 z-20 shadow-lg">
+                                        {truck.daysOut === 1 ? 'Tomorrow' : `In ${truck.daysOut} Days`}
                                     </div>
-                                    <span className="font-black text-white text-sm sm:text-base lg:text-lg font-mono">{Math.round(truck.qty)}</span>
-                                </div>
 
-                                <div className={`text-[8px] sm:text-[10px] uppercase font-bold text-center mt-0.5 sm:mt-1 ${truck.identity.textColor} opacity-70`}>{truck.name.split(' ')[0]}</div>
-                            </div>
-                        ));
+                                    <div className={`p-1.5 sm:p-2 rounded-md sm:rounded-lg border-2 ${truck.identity.bgColor} ${truck.identity.borderColor} flex flex-col items-center gap-0.5 sm:gap-1 shadow-[0_0_15px_rgba(0,0,0,0.5)] bg-slate-800`}>
+                                        <div className="flex items-center gap-0.5 sm:gap-1">
+                                            <TruckIcon size={16} className={truck.identity.iconColor} />
+                                            <Truck className={`w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 ${truck.identity.truckColor}`} />
+                                        </div>
+                                        <span className="font-black text-white text-sm sm:text-base lg:text-lg font-mono">{Math.round(truck.qty)}</span>
+                                    </div>
+
+                                    <div className={`text-[8px] sm:text-[10px] uppercase font-bold text-center mt-0.5 sm:mt-1 ${truck.identity.textColor} opacity-70`}>{truck.identity.name.split(' ')[0]}</div>
+                                </div>
+                            )
+                        });
                     })()}
                 </div>
             </div>
@@ -400,11 +416,12 @@ const OrderingScreen = ({ state, suppliers, onOrder, turnIndex, seasonInfo, last
                                 <div className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-4">
                                     {suppliers.map(s => {
                                         const identity = SUPPLIER_IDENTITY[s.id] || SUPPLIER_IDENTITY[0];
+                                        const SupplierIcon = identity.Icon;
                                         if (orders[s.id] === 0) return null;
                                         return (
                                             <div key={s.id} className="flex justify-between items-center text-xs sm:text-sm">
                                                 <div className="flex items-center gap-1 sm:gap-2">
-                                                    <span>{identity.emoji}</span>
+                                                    <SupplierIcon size={14} className={identity.iconColor} />
                                                     <span className="text-slate-400">×{orders[s.id]}</span>
                                                 </div>
                                                 <span className={`font-mono ${identity.textColor}`}>${(orders[s.id] * s.cost).toFixed(2)}</span>
