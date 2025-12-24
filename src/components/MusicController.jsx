@@ -21,7 +21,7 @@ export function MusicProvider({ children }) {
     useEffect(() => {
         const audio = new Audio(bgMusic);
         audio.loop = true;
-        audio.volume = 0.3; // Start at 30% volume
+        audio.volume = 0.23; // Start at 30% volume
         audioRef.current = audio;
 
         return () => {
