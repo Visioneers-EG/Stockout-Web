@@ -131,7 +131,6 @@ const StartScreen = ({ onSelectScenario }) => {
                     <Sparkles className="text-yellow-400 w-4 h-4 sm:w-5 sm:h-5" />
                 </p>
 
-                {/* Leaderboard Button */}
                 <div className="flex justify-center mb-6 sm:mb-8 lg:mb-10">
                     <button
                         onClick={() => { click(); setShowLeaderboard(true); }}

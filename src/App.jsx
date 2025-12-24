@@ -8,6 +8,7 @@ import ResultsScreen from './components/ResultsScreen';
 import StartScreen from './components/StartScreen';
 import TutorialScreen from './components/TutorialScreen';
 import ConfirmationModal from './components/ConfirmationModal';
+import LeaderboardScreen from './components/LeaderboardScreen';
 
 // Load Traces
 import traceSimple from './assets/trace_simple.json';
@@ -103,6 +104,12 @@ function App() {
 
   // Initialize Game
   useEffect(() => {
+    // Check for hidden leaderboard route
+    if (window.location.pathname === '/leaderboard') {
+      setGameState('LEADERBOARD');
+      return;
+    }
+
     if (gameState === 'START') {
       let initial = mdp.create_initial_state();
 
@@ -160,7 +167,12 @@ function App() {
   };
 
   if (gameState === 'SCENARIO_SELECT') {
-    return <StartScreen onSelectScenario={handleSelectScenario} />;
+    return (
+      <StartScreen
+        onSelectScenario={handleSelectScenario}
+        onShowLeaderboard={() => setGameState('LEADERBOARD')}
+      />
+    );
   }
 
   if (gameState === 'TUTORIAL') {
@@ -260,6 +272,10 @@ function App() {
         onRestart={() => setGameState('SCENARIO_SELECT')}
       />
     );
+  }
+
+  if (gameState === 'LEADERBOARD') {
+    return <LeaderboardScreen onBack={() => setGameState('SCENARIO_SELECT')} />;
   }
 
   return (

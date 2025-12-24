@@ -10,7 +10,7 @@
  */
 
 // Replace with your deployed Google Apps Script URL
-const SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbzrPP-SXeDWuKtbRxHbTW9FHLKw4Ps0SAj4smrhIUsJxLeGGGvp8ZBsgKb1W6tjdrk3/exec';
+const SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbx-UtePH1R_nLdjsDc-NGgllN1mG2mgfbcBh_LQ1WftAE5NQWvlKf-cjqZpNsfAoY4b/exec';
 
 /**
  * Submit a score to the leaderboard
@@ -98,13 +98,45 @@ function doPost(e) {
     const data = JSON.parse(e.postData.contents);
     
     if (data.action === 'submit') {
-      sheet.appendRow([
-        new Date(),
-        data.name,
-        data.scenario,
-        data.score,
-        data.beatAI ? 'Yes' : 'No'
-      ]);
+      const rows = sheet.getDataRange().getValues();
+      let found = false;
+      let rowIndex = -1;
+      
+      // Check for existing entry for this name + scenario
+      // Start from 1 to skip header
+      for (let i = 1; i < rows.length; i++) {
+        if (rows[i][1] === data.name && rows[i][2] === data.scenario) {
+          found = true;
+          rowIndex = i + 1; // 1-based index for Sheet API
+          
+          // Check if new score is better (lower is better)
+          const currentScore = parseFloat(rows[i][3]);
+          const newScore = parseFloat(data.score);
+          
+          if (newScore < currentScore) {
+            // Update the existing row
+            sheet.getRange(rowIndex, 1, 1, 5).setValues([[
+              new Date(),
+              data.name,
+              data.scenario,
+              data.score,
+              data.beatAI ? 'Yes' : 'No'
+            ]]);
+          }
+          break;
+        }
+      }
+      
+      if (!found) {
+        // Append new row
+        sheet.appendRow([
+          new Date(),
+          data.name,
+          data.scenario,
+          data.score,
+          data.beatAI ? 'Yes' : 'No'
+        ]);
+      }
       
       return ContentService.createTextOutput(JSON.stringify({ success: true }))
         .setMimeType(ContentService.MimeType.JSON);
