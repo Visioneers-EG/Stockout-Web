@@ -149,7 +149,7 @@ const SupplierAvatar = ({ identity, size = 'md' }) => {
     );
 };
 
-const OrderingScreen = ({ state, suppliers, onOrder, turnIndex, seasonInfo, lastTurnMetrics, onBack, totalPaidCost = 0 }) => {
+const OrderingScreen = ({ state, suppliers, onOrder, turnIndex, seasonInfo, lastTurnMetrics, onBack, totalPaidCost = 0, totalTurns = 20, activeEvent = null, showEventPopup = false, onDismissEventPopup = () => { } }) => {
     const [orders, setOrders] = useState(
         Object.fromEntries(suppliers.map(s => [s.id, 0]))
     );
@@ -287,15 +287,34 @@ const OrderingScreen = ({ state, suppliers, onOrder, turnIndex, seasonInfo, last
                         <Zap size={12} className="sm:hidden text-yellow-300" />
                         <Zap size={16} className="hidden sm:block text-yellow-300" />
                         <span>TURN {turnIndex}</span>
-                        <span className="text-emerald-200 text-[10px] sm:text-xs">/ 20</span>
+                        <span className="text-emerald-200 text-[10px] sm:text-xs">/ {totalTurns}</span>
                     </div>
 
-                    <div className={`flex items-center gap-1 sm:gap-2 px-1.5 py-0.5 sm:px-2 sm:py-1 lg:px-3 rounded-full border text-[10px] sm:text-xs lg:text-sm ${seasonInfo.factor > 1.0 ? 'bg-cyan-900/30 border-cyan-500/50 text-cyan-300' : 'bg-yellow-900/30 border-yellow-500/50 text-yellow-300'}`}>
-                        <Calendar size={10} className="sm:hidden" />
-                        <Calendar size={14} className="hidden sm:block lg:hidden" />
-                        <Calendar size={18} className="hidden lg:block" />
-                        <span className="font-bold tracking-wide">{seasonInfo.name}</span>
-                    </div>
+                    {/* Event/Season Display - Dynamic based on active event */}
+                    {activeEvent ? (
+                        <div className={`flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-1.5 lg:px-4 rounded-full border text-[10px] sm:text-xs lg:text-sm font-bold animate-pulse
+                            ${activeEvent.type === 'extreme_surge' ? 'bg-red-900/50 border-red-500 text-red-300' :
+                                activeEvent.type === 'surge' ? 'bg-amber-900/50 border-amber-500 text-amber-300' :
+                                    'bg-blue-900/50 border-blue-500 text-blue-300'}`}>
+                            <span className="text-sm sm:text-base">
+                                {activeEvent.type === 'extreme_surge' ? '🔥' : activeEvent.type === 'surge' ? '📈' : '📉'}
+                            </span>
+                            <span className="tracking-wide">
+                                {activeEvent.type === 'extreme_surge' ? '3x SURGE!' :
+                                    activeEvent.type === 'surge' ? '2x Surge' : '0.5x Slump'}
+                            </span>
+                            <span className="opacity-70 text-[8px] sm:text-[10px]">
+                                ({Math.round(activeEvent.endChance * 100)}% end)
+                            </span>
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-1 sm:gap-2 px-1.5 py-0.5 sm:px-2 sm:py-1 lg:px-3 rounded-full border text-[10px] sm:text-xs lg:text-sm bg-slate-800/50 border-slate-600 text-slate-400">
+                            <Calendar size={10} className="sm:hidden" />
+                            <Calendar size={14} className="hidden sm:block lg:hidden" />
+                            <Calendar size={18} className="hidden lg:block" />
+                            <span className="font-bold tracking-wide">Normal</span>
+                        </div>
+                    )}
                 </div>
 
                 {/* Stats */}
@@ -446,6 +465,47 @@ const OrderingScreen = ({ state, suppliers, onOrder, turnIndex, seasonInfo, last
 
             {/* Bottom: Pipeline Visualization */}
             {renderPipeline()}
+
+            {/* Event Popup Modal */}
+            {showEventPopup && activeEvent && (
+                <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+                    <div className={`
+                        max-w-md w-full rounded-2xl p-6 sm:p-8 text-center shadow-2xl border-2 animate-bounce-once
+                        ${activeEvent.type === 'extreme_surge' ? 'bg-gradient-to-br from-red-900 to-orange-900 border-red-500' :
+                            activeEvent.type === 'surge' ? 'bg-gradient-to-br from-amber-900 to-orange-900 border-amber-500' :
+                                'bg-gradient-to-br from-blue-900 to-indigo-900 border-blue-500'}
+                    `}>
+                        <div className="text-6xl sm:text-7xl mb-4">
+                            {activeEvent.type === 'extreme_surge' ? '🔥' : activeEvent.type === 'surge' ? '📈' : '📉'}
+                        </div>
+                        <h2 className={`text-2xl sm:text-3xl font-black uppercase tracking-wider mb-2
+                            ${activeEvent.type === 'extreme_surge' ? 'text-red-300' :
+                                activeEvent.type === 'surge' ? 'text-amber-300' : 'text-blue-300'}`}>
+                            {activeEvent.type === 'extreme_surge' ? 'EXTREME SURGE!' :
+                                activeEvent.type === 'surge' ? 'Demand Surge!' : 'Demand Slump!'}
+                        </h2>
+                        <p className="text-white/80 text-lg sm:text-xl mb-4">
+                            {activeEvent.type === 'slump'
+                                ? 'Demand has dropped to 0.5x normal levels!'
+                                : `Demand has increased to ${activeEvent.modifier}x normal levels!`}
+                        </p>
+                        <p className="text-white/60 text-sm mb-6">
+                            {Math.round(activeEvent.endChance * 100)}% chance this ends next turn
+                        </p>
+                        <button
+                            onClick={onDismissEventPopup}
+                            className={`
+                                px-8 py-3 rounded-xl font-bold text-lg uppercase tracking-wider transition-all
+                                ${activeEvent.type === 'extreme_surge' ? 'bg-red-600 hover:bg-red-500 text-white' :
+                                    activeEvent.type === 'surge' ? 'bg-amber-600 hover:bg-amber-500 text-white' :
+                                        'bg-blue-600 hover:bg-blue-500 text-white'}
+                            `}
+                        >
+                            Got It!
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

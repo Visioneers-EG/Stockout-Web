@@ -2,75 +2,75 @@
   "turns": [
     {
       "step": 0,
-      "demand": 12.0,
+      "demand": 10,
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "1": 20.0,
-        "0": 5.0
+        "1": 10.0,
+        "0": 0.0
       },
       "environment_outcome": {
-        "cost": 39.0,
-        "sales": 12.0,
-        "spoilage": 0.0,
-        "inventory": 18.0,
-        "demand": 12.0
+        "cost": 20.0,
+        "sales": 10,
+        "spoilage": 0,
+        "inventory": 20,
+        "demand": 10
       }
     },
     {
       "step": 1,
-      "demand": 6.0,
-      "season_name": "Low Demand",
+      "demand": 9,
+      "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
         "1": 10.0,
         "0": 0.0
       },
       "environment_outcome": {
-        "cost": 19.7,
-        "sales": 6.0,
-        "spoilage": 0.0,
-        "inventory": 17.0,
-        "demand": 6.0
+        "cost": 15.5,
+        "sales": 9,
+        "spoilage": 0,
+        "inventory": 11,
+        "demand": 9
       }
     },
     {
       "step": 2,
-      "demand": 11.0,
+      "demand": 9,
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "1": 10.0,
-        "0": 0.0
+        "1": 5.0,
+        "0": 5.0
       },
       "environment_outcome": {
-        "cost": 13.7,
-        "sales": 11.0,
-        "spoilage": 0.0,
-        "inventory": 6.0,
-        "demand": 11.0
+        "cost": 16.0,
+        "sales": 9,
+        "spoilage": 0,
+        "inventory": 2,
+        "demand": 9
       }
     },
     {
       "step": 3,
-      "demand": 14.0,
-      "season_name": "High Demand",
+      "demand": 8,
+      "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "1": 10.0,
+        "1": 5.0,
         "0": 0.0
       },
       "environment_outcome": {
-        "cost": 16.0,
-        "sales": 14.0,
-        "spoilage": 0.0,
-        "inventory": 12.0,
-        "demand": 14.0
+        "cost": 9.5,
+        "sales": 8,
+        "spoilage": 0,
+        "inventory": 9,
+        "demand": 8
       }
     },
     {
       "step": 4,
-      "demand": 7.0,
+      "demand": 10,
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
@@ -78,16 +78,16 @@
         "0": 0.0
       },
       "environment_outcome": {
-        "cost": 18.0,
-        "sales": 7.0,
-        "spoilage": 0.0,
-        "inventory": 15.0,
-        "demand": 7.0
+        "cost": 14.5,
+        "sales": 10,
+        "spoilage": 0,
+        "inventory": 9,
+        "demand": 10
       }
     },
     {
       "step": 5,
-      "demand": 8.0,
+      "demand": 9,
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
@@ -95,16 +95,16 @@
         "0": 0.0
       },
       "environment_outcome": {
-        "cost": 19.2,
-        "sales": 8.0,
-        "spoilage": 0.0,
-        "inventory": 17.0,
-        "demand": 8.0
+        "cost": 12.5,
+        "sales": 9,
+        "spoilage": 0,
+        "inventory": 5,
+        "demand": 9
       }
     },
     {
       "step": 6,
-      "demand": 9.0,
+      "demand": 8,
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
@@ -112,33 +112,33 @@
         "0": 0.0
       },
       "environment_outcome": {
-        "cost": 19.8,
-        "sales": 9.0,
-        "spoilage": 0.0,
-        "inventory": 18.0,
-        "demand": 9.0
+        "cost": 11.0,
+        "sales": 8,
+        "spoilage": 0,
+        "inventory": 2,
+        "demand": 8
       }
     },
     {
       "step": 7,
-      "demand": 11.0,
+      "demand": 10,
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "1": 10.0,
+        "1": 5.0,
         "0": 0.0
       },
       "environment_outcome": {
-        "cost": 19.2,
-        "sales": 11.0,
-        "spoilage": 0.0,
-        "inventory": 17.0,
-        "demand": 11.0
+        "cost": 6.0,
+        "sales": 10,
+        "spoilage": 0,
+        "inventory": 2,
+        "demand": 10
       }
     },
     {
       "step": 8,
-      "demand": 8.0,
+      "demand": 12,
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
@@ -146,33 +146,33 @@
         "0": 0.0
       },
       "environment_outcome": {
-        "cost": 20.4,
-        "sales": 8.0,
-        "spoilage": 0.0,
-        "inventory": 19.0,
-        "demand": 8.0
+        "cost": 10.0,
+        "sales": 12,
+        "spoilage": 0,
+        "inventory": 0,
+        "demand": 12
       }
     },
     {
       "step": 9,
-      "demand": 10.0,
+      "demand": 10,
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
         "1": 10.0,
-        "0": 0.0
+        "0": 5.0
       },
       "environment_outcome": {
-        "cost": 20.4,
-        "sales": 10.0,
-        "spoilage": 0.0,
-        "inventory": 19.0,
-        "demand": 10.0
+        "cost": 20.0,
+        "sales": 10,
+        "spoilage": 0,
+        "inventory": 0,
+        "demand": 10
       }
     },
     {
       "step": 10,
-      "demand": 7.0,
+      "demand": 10,
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
@@ -180,33 +180,33 @@
         "0": 0.0
       },
       "environment_outcome": {
-        "cost": 22.4,
-        "sales": 7.0,
-        "spoilage": 0.0,
-        "inventory": 22.0,
-        "demand": 7.0
+        "cost": 10.0,
+        "sales": 10,
+        "spoilage": 0,
+        "inventory": 0,
+        "demand": 10
       }
     },
     {
       "step": 11,
-      "demand": 11.0,
+      "demand": 10,
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "1": 0.0,
+        "1": 10.0,
         "0": 0.0
       },
       "environment_outcome": {
-        "cost": 11.7,
-        "sales": 11.0,
-        "spoilage": 0.0,
-        "inventory": 21.0,
-        "demand": 11.0
+        "cost": 10.0,
+        "sales": 10,
+        "spoilage": 0,
+        "inventory": 0,
+        "demand": 10
       }
     },
     {
       "step": 12,
-      "demand": 11.0,
+      "demand": 9,
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
@@ -214,136 +214,51 @@
         "0": 0.0
       },
       "environment_outcome": {
-        "cost": 21.0,
-        "sales": 11.0,
-        "spoilage": 0.0,
-        "inventory": 20.0,
-        "demand": 11.0
+        "cost": 10.5,
+        "sales": 9,
+        "spoilage": 0,
+        "inventory": 1,
+        "demand": 9
       }
     },
     {
       "step": 13,
-      "demand": 8.0,
+      "demand": 8,
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "1": 10.0,
-        "0": 0.0
+        "1": 5.0,
+        "0": 5.0
       },
       "environment_outcome": {
-        "cost": 22.4,
-        "sales": 8.0,
-        "spoilage": 0.0,
-        "inventory": 22.0,
-        "demand": 8.0
+        "cost": 16.5,
+        "sales": 8,
+        "spoilage": 0,
+        "inventory": 3,
+        "demand": 8
       }
     },
     {
       "step": 14,
-      "demand": 12.0,
+      "demand": 10,
       "season_name": "Normal",
       "season_factor": 1.0,
       "rl_action": {
-        "1": 10.0,
+        "1": 5.0,
         "0": 0.0
       },
       "environment_outcome": {
-        "cost": 16.0,
-        "sales": 12.0,
-        "spoilage": 0.0,
-        "inventory": 10.0,
-        "demand": 12.0
-      }
-    },
-    {
-      "step": 15,
-      "demand": 6.0,
-      "season_name": "Low Demand",
-      "season_factor": 1.0,
-      "rl_action": {
-        "1": 10.0,
-        "0": 0.0
-      },
-      "environment_outcome": {
-        "cost": 17.8,
-        "sales": 6.0,
-        "spoilage": 0.0,
-        "inventory": 14.0,
-        "demand": 6.0
-      }
-    },
-    {
-      "step": 16,
-      "demand": 7.0,
-      "season_name": "Normal",
-      "season_factor": 1.0,
-      "rl_action": {
-        "1": 10.0,
-        "0": 0.0
-      },
-      "environment_outcome": {
-        "cost": 19.2,
-        "sales": 7.0,
-        "spoilage": 0.0,
-        "inventory": 17.0,
-        "demand": 7.0
-      }
-    },
-    {
-      "step": 17,
-      "demand": 8.0,
-      "season_name": "Normal",
-      "season_factor": 1.0,
-      "rl_action": {
-        "1": 10.0,
-        "0": 0.0
-      },
-      "environment_outcome": {
-        "cost": 20.4,
-        "sales": 8.0,
-        "spoilage": 0.0,
-        "inventory": 19.0,
-        "demand": 8.0
-      }
-    },
-    {
-      "step": 18,
-      "demand": 10.0,
-      "season_name": "Normal",
-      "season_factor": 1.0,
-      "rl_action": {
-        "1": 10.0,
-        "0": 0.0
-      },
-      "environment_outcome": {
-        "cost": 20.4,
-        "sales": 10.0,
-        "spoilage": 0.0,
-        "inventory": 19.0,
-        "demand": 10.0
-      }
-    },
-    {
-      "step": 19,
-      "demand": 5.0,
-      "season_name": "Low Demand",
-      "season_factor": 1.0,
-      "rl_action": {
-        "1": 10.0,
-        "0": 0.0
-      },
-      "environment_outcome": {
-        "cost": 23.8,
-        "sales": 5.0,
-        "spoilage": 0.0,
-        "inventory": 24.0,
-        "demand": 5.0
+        "cost": 9.0,
+        "sales": 10,
+        "spoilage": 0,
+        "inventory": 8,
+        "demand": 10
       }
     }
   ],
   "metadata": {
     "scenario": "simple",
-    "episode_length": 20,
+    "episode_length": 15,
     "base_demand": 10.0,
     "description": "Steady demand, 2 suppliers",
     "initial_inventory": 30,
@@ -360,6 +275,8 @@
         "lead_time": 3,
         "cost": 1.0
       }
-    ]
+    ],
+    "seed": 206671011,
+    "total_ai_cost": 191.0
   }
 }

@@ -10,10 +10,77 @@ import TutorialScreen from './components/TutorialScreen';
 import ConfirmationModal from './components/ConfirmationModal';
 import LeaderboardScreen from './components/LeaderboardScreen';
 
-// Load Traces
+// Load Traces - Single best trace per difficulty (AI plays without events)
 import traceSimple from './assets/trace_simple.json';
 import traceModerate from './assets/trace_moderate.json';
 import traceComplex from './assets/trace_complex.json';
+
+const TRACES = {
+  simple: traceSimple,
+  moderate: traceModerate,
+  complex: traceComplex
+};
+
+// Event system configuration (player-only challenges)
+// Guaranteed number of events per playthrough
+const EVENT_CONFIG = {
+  simple: {
+    surgeCount: 0,        // No events on simple
+    extremeSurgeCount: 0,
+    slumpCount: 0
+  },
+  moderate: {
+    surgeCount: 2,        // 2 guaranteed surges
+    extremeSurgeCount: 0,
+    slumpCount: 1         // 1 guaranteed slump
+  },
+  complex: {
+    surgeCount: 3,        // 3 guaranteed surges
+    extremeSurgeCount: 1, // 1 guaranteed extreme surge
+    slumpCount: 1         // 1 guaranteed slump
+  }
+};
+
+// Generate scheduled events for a playthrough
+const generateEventSchedule = (scenario, episodeLength) => {
+  const config = EVENT_CONFIG[scenario];
+  const schedule = {}; // { turnIndex: eventType }
+
+  const totalEvents = config.surgeCount + config.extremeSurgeCount + config.slumpCount;
+  if (totalEvents === 0) return schedule;
+
+  // Get available turns (skip first 2 and last 2 turns for fairness)
+  const availableTurns = [];
+  for (let i = 2; i < episodeLength - 2; i++) {
+    availableTurns.push(i);
+  }
+
+  // Shuffle available turns
+  for (let i = availableTurns.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [availableTurns[i], availableTurns[j]] = [availableTurns[j], availableTurns[i]];
+  }
+
+  // Assign events to turns
+  let turnIdx = 0;
+
+  // Extreme surges first (more impactful)
+  for (let i = 0; i < config.extremeSurgeCount && turnIdx < availableTurns.length; i++) {
+    schedule[availableTurns[turnIdx++]] = 'extreme_surge';
+  }
+
+  // Regular surges
+  for (let i = 0; i < config.surgeCount && turnIdx < availableTurns.length; i++) {
+    schedule[availableTurns[turnIdx++]] = 'surge';
+  }
+
+  // Slumps
+  for (let i = 0; i < config.slumpCount && turnIdx < availableTurns.length; i++) {
+    schedule[availableTurns[turnIdx++]] = 'slump';
+  }
+
+  return schedule;
+};
 
 // --- CONFIG ---
 const SHELF_LIFE = 5;
@@ -22,13 +89,7 @@ const COST_PARAMS = new CostParameters({
   shortage_cost: 10.0,
   spoilage_cost: 5.0
 });
-const EPISODE_LENGTH = 20;
-
-const TRACES = {
-  simple: traceSimple,
-  moderate: traceModerate,
-  complex: traceComplex
-};
+const DEFAULT_EPISODE_LENGTH = 20;
 
 // Default suppliers (used if trace doesn't have them)
 const DEFAULT_SUPPLIERS = [
@@ -40,8 +101,14 @@ function App() {
   const [gameState, setGameState] = useState('SCENARIO_SELECT');
   const [turnIndex, setTurnIndex] = useState(0);
   const [scenario, setScenario] = useState('simple');
-  const [activeTrace, setActiveTrace] = useState(traceSimple);
+  const [activeTrace, setActiveTrace] = useState(TRACES.simple);
   const [showExitModal, setShowExitModal] = useState(false);
+
+  // Event system state (player-only challenges)
+  const [activeEvent, setActiveEvent] = useState(null);
+  const [eventSchedule, setEventSchedule] = useState({}); // { turnIndex: eventType }
+  const [showEventPopup, setShowEventPopup] = useState(false); // Show popup when new event starts
+  // activeEvent = { type: 'surge' | 'extreme_surge' | 'slump', modifier: number, endChance: number, turnsActive: number }
 
   // Get suppliers from trace metadata or use defaults
   const suppliers = useMemo(() => {
@@ -55,14 +122,54 @@ function App() {
     cost_params: COST_PARAMS
   }), [suppliers]);
 
+  // Get episode length from trace or use default
+  const episodeLength = activeTrace?.metadata?.episode_length || DEFAULT_EPISODE_LENGTH;
+
   const [inventoryState, setInventoryState] = useState(null);
   const [userHistory, setUserHistory] = useState([]);
   const [lastTurnResult, setLastTurnResult] = useState(null);
 
-  // Select Scenario - now goes to tutorial first
+  // Get event for current turn from schedule
+  const getEventForTurn = (turn) => {
+    // Check if there's an active event that might continue
+    if (activeEvent) {
+      const roll = Math.random();
+      if (roll < activeEvent.endChance) {
+        // Event ends
+        return null;
+      } else {
+        // Event continues, chance to end increases
+        return {
+          ...activeEvent,
+          endChance: Math.min(0.9, activeEvent.endChance + 0.2),
+          turnsActive: activeEvent.turnsActive + 1
+        };
+      }
+    }
+
+    // Check schedule for new event
+    const scheduledType = eventSchedule[turn];
+    if (!scheduledType) return null;
+
+    const eventModifiers = {
+      'extreme_surge': { type: 'extreme_surge', modifier: 3.0, endChance: 0.4, turnsActive: 1 },
+      'surge': { type: 'surge', modifier: 2.0, endChance: 0.2, turnsActive: 1 },
+      'slump': { type: 'slump', modifier: 0.5, endChance: 0.3, turnsActive: 1 }
+    };
+
+    return eventModifiers[scheduledType] || null;
+  };
+
+  // Select Scenario - set trace directly and generate event schedule
   const handleSelectScenario = (selectedId) => {
     setScenario(selectedId);
     setActiveTrace(TRACES[selectedId]);
+    setActiveEvent(null);
+
+    // Generate event schedule for this playthrough
+    const traceEpisodeLength = TRACES[selectedId]?.metadata?.episode_length || DEFAULT_EPISODE_LENGTH;
+    const schedule = generateEventSchedule(selectedId, traceEpisodeLength);
+    setEventSchedule(schedule);
     // Check if user has seen tutorial before (localStorage)
     const hasSeenTutorial = localStorage.getItem('stockout_tutorial_seen');
     if (hasSeenTutorial) {
@@ -128,26 +235,35 @@ function App() {
   // Handle Order Submission
   const handleOrder = (orders) => {
     const traceTurn = activeTrace.turns[turnIndex];
-    const demand = traceTurn ? traceTurn.environment_outcome.demand : 10;
+    const baseDemand = traceTurn ? traceTurn.environment_outcome.demand : 10;
+
+    // Apply event modifier (player-only challenge)
+    const eventModifier = activeEvent?.modifier || 1.0;
+    const actualDemand = Math.round(baseDemand * eventModifier);
 
     const action = {};
     Object.keys(orders).forEach(k => action[parseInt(k)] = orders[k]);
 
-    const result = mdp.step(inventoryState, action, demand);
+    const result = mdp.step(inventoryState, action, actualDemand);
 
     setInventoryState(result.next_state);
     setLastTurnResult({
       ...result,
-      cost: result.costs.total_cost
+      cost: result.costs.total_cost,
+      baseDemand: baseDemand,
+      actualDemand: actualDemand,
+      eventModifier: eventModifier
     });
 
     const historyEntry = {
       turn: turnIndex,
-      demand: demand,
+      demand: actualDemand, // Track actual demand player faced
+      baseDemand: baseDemand,
       sales: result.sales,
       spoilage: result.spoiled,
       cost: result.costs.total_cost,
-      orders: action
+      orders: action,
+      hadEvent: activeEvent !== null
     };
 
     const newHistory = [...userHistory, historyEntry];
@@ -159,9 +275,18 @@ function App() {
   // Handle Next Turn Transition
   const handleNextTurn = () => {
     const nextTurn = turnIndex + 1;
-    if (nextTurn >= EPISODE_LENGTH) {
+    if (nextTurn >= episodeLength) {
       setGameState('RESULTS');
     } else {
+      // Check for events on the next turn
+      const nextEvent = getEventForTurn(nextTurn);
+      setActiveEvent(nextEvent);
+
+      // Show popup if this is a NEW event (not a continuation)
+      if (nextEvent && nextEvent.turnsActive === 1) {
+        setShowEventPopup(true);
+      }
+
       setTurnIndex(nextTurn);
       setGameState('ORDERING');
     }
@@ -187,9 +312,17 @@ function App() {
 
   if (gameState === 'ORDERING' && inventoryState) {
     const traceTurn = activeTrace.turns[turnIndex];
-    const seasonInfo = {
-      name: traceTurn?.season_name || 'Normal',
-      factor: traceTurn?.season_factor || 1.0
+
+    // Season info now comes from active event, not trace
+    const seasonInfo = activeEvent ? {
+      name: activeEvent.type === 'extreme_surge' ? 'EXTREME SURGE!' :
+        activeEvent.type === 'surge' ? 'Demand Surge!' : 'Demand Slump',
+      factor: activeEvent.modifier,
+      endChance: Math.round(activeEvent.endChance * 100)
+    } : {
+      name: 'Normal',
+      factor: 1.0,
+      endChance: null
     };
 
     let lastTurnMetrics = null;
@@ -217,6 +350,10 @@ function App() {
           lastTurnMetrics={lastTurnMetrics}
           onBack={handleBack}
           totalPaidCost={totalPaidCost}
+          totalTurns={episodeLength}
+          activeEvent={activeEvent}
+          showEventPopup={showEventPopup}
+          onDismissEventPopup={() => setShowEventPopup(false)}
         />
         <ConfirmationModal
           isOpen={showExitModal}
@@ -231,9 +368,17 @@ function App() {
 
   if (gameState === 'SHOP_VIEW' && lastTurnResult) {
     const traceTurn = activeTrace.turns[turnIndex];
-    const seasonInfo = {
-      name: traceTurn?.season_name || 'Normal',
-      factor: traceTurn?.season_factor || 1.0
+
+    // Season info from active event (same as ordering screen)
+    const seasonInfo = activeEvent ? {
+      name: activeEvent.type === 'extreme_surge' ? 'EXTREME SURGE!' :
+        activeEvent.type === 'surge' ? 'Demand Surge!' : 'Demand Slump',
+      factor: activeEvent.modifier,
+      endChance: Math.round(activeEvent.endChance * 100)
+    } : {
+      name: 'Normal',
+      factor: 1.0,
+      endChance: null
     };
 
     const rlOutcome = traceTurn?.environment_outcome;
@@ -249,6 +394,7 @@ function App() {
           seasonInfo={seasonInfo}
           onNextTurn={handleNextTurn}
           aiComparison={aiComparison}
+          activeEvent={activeEvent}
           history={userHistory}
           rlTrace={activeTrace}
           onBack={handleBack}
