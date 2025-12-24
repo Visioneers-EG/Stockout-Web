@@ -34,11 +34,16 @@ export class PerishableInventoryMDP {
         // Copy state
         const next_state = state.copy();
 
-        // 2. Arrivals
+        // 2. Calculate arriving inventory (before any changes)
         const arrivals = next_state.get_arriving_inventory();
+
+        // 3. Age inventory FIRST (spoilage happens before arrivals)
+        const spoiled = next_state.age_inventory();
+
+        // 4. Add arrivals AFTER aging (so they stay in freshest bucket)
         next_state.add_arrivals(arrivals);
 
-        // 3. Serve Demand
+        // 5. Serve Demand
         let total_demand = demand;
         if (!this.lost_sales) {
             total_demand += next_state.backorders;
@@ -49,7 +54,7 @@ export class PerishableInventoryMDP {
         // Snapshot for holding cost
         const inventory_snapshot = [...next_state.inventory];
 
-        // 4. Calculate Costs
+        // 6. Calculate Costs
         const costs = new PeriodCosts();
 
         // Purchase
@@ -69,10 +74,7 @@ export class PerishableInventoryMDP {
             this.cost_params.shortage_cost
         );
 
-        // 5. Aging and Spoilage
-        const spoiled = next_state.age_inventory();
-
-        // Spoilage Cost
+        // Spoilage Cost (already calculated spoiled above)
         costs.spoilage_cost = calculate_spoilage_cost(
             spoiled,
             this.cost_params.spoilage_cost

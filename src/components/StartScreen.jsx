@@ -57,6 +57,7 @@ const ScenarioCard = ({ title, description, difficulty, suppliers, icon: Icon, c
 const StartScreen = ({ onSelectScenario, onPlayTutorial }) => {
     const [showLeaderboard, setShowLeaderboard] = useState(false);
     const { click } = useSoundEffects();
+    const hasSeenTutorial = localStorage.getItem('stockout_tutorial_seen') === 'true';
 
     const scenarios = [
         {
@@ -142,15 +143,17 @@ const StartScreen = ({ onSelectScenario, onPlayTutorial }) => {
                         <span className="sm:hidden">Leaderboard</span>
                     </button>
 
-                    <button
-                        onClick={() => { click(); onPlayTutorial(); }}
-                        className="flex items-center gap-2 sm:gap-3 px-4 py-2.5 sm:px-6 sm:py-3 lg:px-8 lg:py-4 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-bold rounded-lg sm:rounded-xl border border-slate-700 shadow-lg transition-all text-sm sm:text-base lg:text-lg"
-                    >
-                        <BookOpen size={18} className="sm:hidden" />
-                        <BookOpen size={24} className="hidden sm:block" />
-                        <span className="hidden sm:inline">Replay Tutorial</span>
-                        <span className="sm:hidden">Tutorial</span>
-                    </button>
+                    {hasSeenTutorial && (
+                        <button
+                            onClick={() => { click(); onPlayTutorial(); }}
+                            className="flex items-center gap-2 sm:gap-3 px-4 py-2.5 sm:px-6 sm:py-3 lg:px-8 lg:py-4 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-bold rounded-lg sm:rounded-xl border border-slate-700 shadow-lg transition-all text-sm sm:text-base lg:text-lg"
+                        >
+                            <BookOpen size={18} className="sm:hidden" />
+                            <BookOpen size={24} className="hidden sm:block" />
+                            <span className="hidden sm:inline">Replay Tutorial</span>
+                            <span className="sm:hidden">Tutorial</span>
+                        </button>
+                    )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
